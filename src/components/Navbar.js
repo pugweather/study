@@ -17,8 +17,8 @@ const Navbar = () => {
                     <Link to="/progress"><li><span className='nav-vertical-bar'></span><FaChartBar className="nav-icon" />Progress</li></Link>
                 </ul>
                 <div className="auth-buttons">
-                    <button className="signup-btn">Sign Up</button>
-                    <button className="login-btn">Login</button>
+                    <Link to="/signup" className="signup-btn">Sign Up</Link>
+                    <Link to="/login" className="login-btn">Login</Link>
                 </div>
             </div>
         </nav>

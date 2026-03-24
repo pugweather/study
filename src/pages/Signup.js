@@ -1,8 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { isValidName, isValidEmail, isValidPassword, isValidUsername, startsAndEndsWithAlphanumeric} from '../utils/utils'
 import Navbar from '../components/Navbar'
 import './Signup.css'
 
 const Signup = () => {
+
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         name: '',
@@ -12,8 +16,94 @@ const Signup = () => {
         confirmPassword: ''
     })
 
-    function handleSubmit() {
-        // TODO: do this next
+    const [errors, setErrors] = useState({})
+
+    async function handleSubmit() {
+        let { name, username, email, password, confirmPassword } = formData
+
+        name = name.trim()
+        username = username.trim()
+        email = email.trim()
+        password = password.trim()
+        confirmPassword = confirmPassword.trim()
+
+        const newErrors = {}
+
+        const fields = { name, username, email, password, confirmPassword }
+
+        // General errors
+        for (const [key, value] of Object.entries(fields)) {
+            if (!value) {
+            if (key === "confirmPassword") {
+                newErrors[key] = "must enter password to confirm"
+            } else {
+                newErrors[key] = `${key} is required`
+            }
+            }
+        }
+
+        // Name
+        if (name && (name.length < 3 || name.length > 50)) {
+            newErrors.name = "name must be between 3 and 50 characters"
+        } else if (name && !isValidName(name)) {
+            newErrors.name =
+            "name must only contain valid characters (A-Z, hyphens, and spaces)"
+        }
+
+        // Username
+        if (username && (username.length < 3 || username.length > 20)) {
+            newErrors.username = "username must be between 3 and 20 characters"
+        } else if (username && !isValidUsername(username)) {
+            newErrors.username =
+            "username must only contain letters, numbers, hyphens, and underscores"
+        } else if (username && !startsAndEndsWithAlphanumeric(username)) {
+            newErrors.username =
+            "username must begin and end with either a letter or number"
+        }
+
+        // Email
+        if (email && !isValidEmail(email)) {
+            newErrors.email = "please enter a valid email"
+        }
+
+        // Password
+        if (password && password.length < 8) {
+            newErrors.password = "password must be at least 8 characters"
+        } else if (password && !isValidPassword(password)) {
+            newErrors.password =
+            "password must contain at least one letter and one number"
+        }
+
+        // Confirm password match (you said you'd add this — included it)
+        if (password && confirmPassword && password !== confirmPassword) {
+            newErrors.confirmPassword = "passwords do not match"
+        }
+
+        setErrors(newErrors)
+
+        // Don't fetch if we have errors
+        if (Object.keys(newErrors).length > 0) return
+
+        try {
+            const response = await fetch('/api/auth/signup', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                    body: JSON.stringify({name, username, email, password})
+            })
+            if (!response.ok) {
+                setErrors(prev => ({...prev, general: response.error || "Something went wrong"}))
+                return
+            }
+
+            // Success
+            navigate("/login")
+
+        } catch(err) {
+            setErrors(prev => ({...prev, general:  "Network error. Please try again"}))
+        }
+
     }
  
     function handleChange(e) {
