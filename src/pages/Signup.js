@@ -18,7 +18,10 @@ const Signup = () => {
 
     const [errors, setErrors] = useState({})
 
-    async function handleSubmit() {
+    async function handleSubmit(e) {
+
+        e.preventDefault()
+
         let { name, username, email, password, confirmPassword } = formData
 
         name = name.trim()
@@ -85,12 +88,12 @@ const Signup = () => {
         if (Object.keys(newErrors).length > 0) return
 
         try {
-            const response = await fetch('/api/auth/signup', {
+            const response = await fetch('http://localhost:8000/api/auth/signup', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                    body: JSON.stringify({name, username, email, password})
+                body: JSON.stringify({name, username, email, password})
             })
             if (!response.ok) {
                 setErrors(prev => ({...prev, general: response.error || "Something went wrong"}))
@@ -116,7 +119,7 @@ const Signup = () => {
             <div className='right-frame'>
                 <div className='signup-container'>
                     <h1 className='signup-title'>Create Account</h1>
-                    <form className='signup-form'>
+                    <form className='signup-form' onSubmit={handleSubmit}>
                         <div className='form-group'>
                             <label>Name</label>
                             <input 
@@ -125,6 +128,7 @@ const Signup = () => {
                                 onChange={handleChange}
                                 value={formData.name}
                                 className='signup-input'
+                                required
                             />
                         </div>
                         
