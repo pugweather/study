@@ -27,8 +27,8 @@ const Signup = () => {
         name = name.trim()
         username = username.trim()
         email = email.trim()
-        password = password.trim()
-        confirmPassword = confirmPassword.trim()
+        password = password
+        confirmPassword = confirmPassword
 
         const newErrors = {}
 
@@ -112,8 +112,6 @@ const Signup = () => {
     function handleChange(e) {
         setFormData(prev => ({...prev, [e.target.name]: e.target.value}))
     }
-
-    console.log(errors)
 
     return (
         <div className='page-wrapper text-blue'>

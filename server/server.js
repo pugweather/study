@@ -26,6 +26,18 @@ app.use(session({
 }))
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000"
+}))
+
+
+// Log session for testing auth
+app.use((req, res, next) => {
+    console.log('=== REQUEST ===')
+    console.log('Session:', req.session)
+    console.log('Session userId:', req.session?.userId)
+    console.log('================')
+    next()
+})
 
 app.use("/api/auth", authRouter)

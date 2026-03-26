@@ -49,12 +49,59 @@ export async function registerUser(req, res) {
         } else {
             const hashedPassword = await bcrypt.hash(password, 10)
             const result = await db.run(`INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)`, [name, username, email, hashedPassword])
-            req.session.userId = result.lastID
             res.status(201).json({message: 'User registered'})
         }
 
     } catch(err) {
         console.log("Registration error: ", err.message)
         res.status(500).json({message: 'Error registering user'})
+    }
+}
+
+export async function loginUser(req, res) {
+
+    const {username, password} = req.body
+
+    if (!username || !password) {
+        return res.status(400).json({error: "username and password are required"})
+    }
+
+    // Username validation
+    if (username.length < 3 || username.length > 20) {
+        return res.status(400).json({error: "username must be between 3 and 20 characters"})
+    } else if (!isValidUsername(username)) {
+        return res.status(400).json({error: "username must only contain letters, numbers, hyphens, and underscores"})
+    } else if (!startsAndEndsWithAlphanumeric(username)) {
+        return res.status(400).json({error: "username must begin and end with either a letter or number"})
+    }
+
+    // Password validation
+    if (password.length < 8) {
+        return res.status(400).json({error: "password must be at least 8 characters"})
+    } else if (!isValidPassword(password)) {
+        return res.status(400).json({error: "password must contain at least one letter and one number"})
+    }
+
+    try {
+
+        const db = await getDBConnection()
+        
+        const user = await db.get('SELECT * from users WHERE username = ?', [username])
+
+        if (!user) {
+            return res.status(400).json({error: "username or password isn't correct"})
+        }
+
+        const passwordValid = await bcrypt.compare(password, user.password)
+        if (!passwordValid) {
+            return res.status(400).json({error: "username or password isn't correct"})
+        }
+
+        req.session.userId = user.id
+
+        res.json({message: "Success"})
+
+    } catch(err) {
+        res.status(500).json({message: 'Error logging in'})
     }
 }
