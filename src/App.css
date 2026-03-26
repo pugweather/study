@@ -35,3 +35,7 @@ a {
     text-decoration: none;
 }
 
+.error-text {
+    color: red;
+    font-size: 1rem;
+}

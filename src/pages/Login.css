@@ -1,10 +1,10 @@
-.signup-container {
+.login-container {
     max-width: 500px;
     margin: 0 auto;
     padding: 2rem;
 }
 
-.signup-title {
+.login-title {
     color: #2C3F65;
     font-size: 2rem;
     font-weight: 800;
@@ -12,7 +12,7 @@
     text-align: center;
 }
 
-.signup-form {
+.login-form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -30,7 +30,7 @@
     font-size: 1rem;
 }
 
-.signup-input {
+.login-input {
     width: 100%;
     padding: 0.875rem 1.25rem;
     border: 2px solid #cbd5e1;
@@ -40,17 +40,17 @@
     transition: all 0.2s ease;
 }
 
-.signup-input:hover {
+.login-input:hover {
     border-color: #94a3b8;
 }
 
-.signup-input:focus {
+.login-input:focus {
     outline: none;
     border-color: #2C3F65;
     box-shadow: 0 0 0 3px rgba(44, 63, 101, 0.1);
 }
 
-.signup-btn {
+.login-btn {
     background: #2C3F65;
     color: white;
     border: none;
@@ -64,13 +64,13 @@
     margin-top: 1rem;
 }
 
-.signup-btn:hover {
+.login-btn:hover {
     background: #1e2f4f;
     transform: translateY(-2px);
     border-bottom-width: 6px;
 }
 
-.signup-btn:active {
+.login-btn:active {
     transform: translateY(2px);
     border-bottom-width: 2px;
 }

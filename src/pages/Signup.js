@@ -113,6 +113,8 @@ const Signup = () => {
         setFormData(prev => ({...prev, [e.target.name]: e.target.value}))
     }
 
+    console.log(errors)
+
     return (
         <div className='page-wrapper text-blue'>
             <Navbar />
@@ -130,6 +132,7 @@ const Signup = () => {
                                 className='signup-input'
                                 required
                             />
+                            {errors["name"] && <div className='error-text'>{errors["name"]}</div>}
                         </div>
                         
                         <div className='form-group'>
@@ -142,6 +145,7 @@ const Signup = () => {
                                 className='signup-input'
                                 required
                             />
+                            {errors["username"] && <div className='error-text'>{errors["username"]}</div>}
                         </div>
 
                         <div className='form-group'>
@@ -155,6 +159,7 @@ const Signup = () => {
                                 className='signup-input'
                                 required
                             />
+                            {errors["email"] && <div className='error-text'>{errors["email"]}</div>}
                         </div>
 
                         <div className='form-group'>
@@ -168,6 +173,7 @@ const Signup = () => {
                                 className='signup-input'
                                 required
                             />
+                            {errors["password"] && <div className='error-text'>{errors["password"]}</div>}
                         </div>
 
                         <div className='form-group'>
@@ -181,6 +187,7 @@ const Signup = () => {
                                 className='signup-input'
                                 required
                             />
+                            {errors["confirmPassword"] && <div className='error-text'>{errors["confirmPassword"]}</div>}
                         </div>
 
                         <button type='submit' className='signup-btn'>Sign Up</button>
