@@ -27,9 +27,9 @@ app.use(session({
 
 app.use(express.json())
 app.use(cors({
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
+  credentials: true
 }))
-
 
 // Log session for testing auth
 app.use((req, res, next) => {
