@@ -1,8 +1,14 @@
 import './Navbar.css'
 import { FaLayerGroup, FaPlus, FaQuestionCircle, FaChartBar } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { useAuth } from "../contexts/AuthContext"
 
 const Navbar = () => {
+
+    const {user} = useAuth()
+
+    console.log(user)
+
     return (
         <nav>
             <div className="nav-container">
@@ -20,6 +26,7 @@ const Navbar = () => {
                     <Link to="/signup" className="signup-btn">Sign Up</Link>
                     <Link to="/login" className="login-btn">Login</Link>
                 </div>
+                {user && <div>Welcome, {user.name}</div>}
             </div>
         </nav>
     )

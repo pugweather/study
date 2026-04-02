@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { isValidUsername, isValidPassword, startsAndEndsWithAlphanumeric } from '../utils/utils'
+import { useAuth } from '../contexts/AuthContext'
 import Navbar from '../components/Navbar'
 import './Login.css'
 
 const Login = () => {
 
     const navigate = useNavigate()
+    const {user, getUser} = useAuth()
+
+    console.log(user)
 
     const [formData, setFormData] = useState({
         username: '',
@@ -17,6 +21,8 @@ const Login = () => {
     function handleChange(e) {
         setFormData(prev => ({...prev, [e.target.name]: e.target.value}))
     }
+
+    // console.log(errors)
 
     async function handleSubmit(e) {
 
@@ -62,8 +68,11 @@ const Login = () => {
             })
             if (!response.ok) {
                 const data = await response.json()
-                setErrors(prev => ({...prev, general: data.error}))
+                setErrors(prev => ({...prev, password: data.error}))
+                return
             }
+
+            await getUser()
 
             // Success
             navigate('/create-flashcards')

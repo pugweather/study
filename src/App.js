@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
 import Home from './pages/Home'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
@@ -8,7 +9,9 @@ import './App.css'
 function App() {
   return (
     <BrowserRouter>
+     <AuthProvider>
       <AppRouter />
+     </AuthProvider>
     </BrowserRouter>
   );
 }
