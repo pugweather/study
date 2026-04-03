@@ -105,3 +105,16 @@ export async function loginUser(req, res) {
         res.status(500).json({message: 'Error logging in'})
     }
 }
+
+export async function logoutUser(req, res) {
+    if (!req.session.userId) {
+        return res.status(400).json({error: "No active session"})
+    }
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(400).json({error: "Logout failed"})
+        }
+        res.clearCookie("connect.sid")
+        res.json({message: "User logged out"})
+    })
+}

@@ -5,9 +5,7 @@ import { useAuth } from "../contexts/AuthContext"
 
 const Navbar = () => {
 
-    const {user} = useAuth()
-
-    console.log(user)
+    const {user, logout} = useAuth()
 
     return (
         <nav>
@@ -23,10 +21,11 @@ const Navbar = () => {
                     <Link to="/progress"><li><span className='nav-vertical-bar'></span><FaChartBar className="nav-icon" />Progress</li></Link>
                 </ul>
                 <div className="auth-buttons">
-                    <Link to="/signup" className="signup-btn">Sign Up</Link>
-                    <Link to="/login" className="login-btn">Login</Link>
+                    {!user && <Link to="/signup" className="signup-btn">Sign Up</Link>}
+                    {!user && <Link to="/login" className="login-btn">Login</Link>}
+                    {user && <button className="logout-btn" onClick={logout}>Logout</button>}
                 </div>
-                {user && <div>Welcome, {user.name}</div>}
+                {user && <div className="welcome-text">Welcome, {user.name}</div>}
             </div>
         </nav>
     )

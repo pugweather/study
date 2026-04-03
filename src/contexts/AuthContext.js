@@ -18,7 +18,22 @@ export function AuthProvider({children}) {
             const data = await response.json()
             setUser(data)
         } catch(err) {
-            console.error("Error: Server Error")
+            console.error("Error: server Error")
+        }
+    }
+
+    async function logout() {
+        try {
+            const response = await fetch("http://localhost:8000/api/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            })
+            if (!response.ok) {
+                throw new Error("Unable to log out user")
+            }
+            setUser(null)
+        } catch(err) {
+            console.error("Error: server error")
         }
     }
 
@@ -27,7 +42,7 @@ export function AuthProvider({children}) {
     }, [])
 
     return (
-        <AuthContext.Provider value={{user, getUser}}>
+        <AuthContext.Provider value={{user, getUser, logout}}>
             {children}
         </AuthContext.Provider>
     )
