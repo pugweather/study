@@ -22,3 +22,5 @@ async function logTable(tableName) {
 }
 
 logTable('users')
+logTable('decks')
+logTable('cards')
