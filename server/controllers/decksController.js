@@ -16,3 +16,7 @@ export async function getDecks(req, res) {
         res.status(500).json({error: "Server error"})
     }
 }
+
+export async function addDeck(req, res) {
+    
+}

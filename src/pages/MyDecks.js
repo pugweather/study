@@ -7,9 +7,14 @@ const MyDecks = () => {
 
     const [decks, setDecks] = useState(null)
     const [isNewDeckModalOpened, setIsNewDeckModalOpened] = useState(false)
+    const [newDeckName, setNewDeckName] = useState('')
 
     const handleOpenNewDeckModal = () => {
         setIsNewDeckModalOpened(true)
+    }
+
+    const handleSaveDeck = () => {
+
     }
 
     return (
