@@ -2,6 +2,7 @@ import express from 'express'
 import session from 'express-session'
 import cors from 'cors'
 import { authRouter } from './routes/auth.js'
+import { decksRouter } from './routes/decks.js'
 import 'dotenv/config'
 
 const app = express()
@@ -41,3 +42,4 @@ app.use((req, res, next) => {
 })
 
 app.use("/api/auth", authRouter)
+app.use("/api/decks", decksRouter)

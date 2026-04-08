@@ -1,8 +1,9 @@
 import express from 'express'
-import { requireAuth } from '../middleware/auth'
+import { requireAuth } from '../middleware/auth.js'
+import { addDeck, getDecks } from '../controllers/decksController.js'
 
-const decksRouter = express.Router()
+export const decksRouter = express.Router()
 
 decksRouter.use(requireAuth)
 decksRouter.get('/', getDecks)
-decksRouter.post('/')
+decksRouter.post('/', addDeck)

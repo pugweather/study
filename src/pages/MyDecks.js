@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Modal from '../components/Modal'
 import './MyDecks.css'
@@ -8,13 +8,57 @@ const MyDecks = () => {
     const [decks, setDecks] = useState(null)
     const [isNewDeckModalOpened, setIsNewDeckModalOpened] = useState(false)
     const [newDeckName, setNewDeckName] = useState('')
+    const [error, setError] = useState({})
+
+    useEffect(() => {
+        getDecks()
+    }, [])
 
     const handleOpenNewDeckModal = () => {
         setIsNewDeckModalOpened(true)
     }
+    const handleCloseNewDeckModal = () => {
+        setIsNewDeckModalOpened(false)
+        resetNewDeckNameInput()
+    }
 
-    const handleSaveDeck = () => {
+    const resetNewDeckNameInput = () => {
+        setNewDeckName('')
+    }
 
+    async function getDecks() {
+        try {
+            const response = await fetch("http://localhost:8000/api/decks", {
+                credentials: "include"
+            })
+            if (!response.ok) {
+                throw new Error("Error: couldn't fetch decks for user")
+            }
+            const data = await response.json()
+            setDecks(data)
+        } catch(err) {
+            console.error("Error:", err.message)
+        }
+    }
+
+    async function handleSaveDeck () {
+        try {
+            const response = await fetch('http://localhost:8000/api/decks', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({title: newDeckName})
+            })
+            if (!response.ok) {
+                throw new Error("Failed to save new deck")
+            }
+            // Success
+            handleCloseNewDeckModal()
+        } catch(err) {
+            setError({error: err.message})
+        }
     }
 
     return (
@@ -31,7 +75,10 @@ const MyDecks = () => {
 
                     <div className='decks-grid'>
                         {decks?.map(deck => (
-                            console.log(deck)
+                            <div key={deck.id} className='deck-card'>
+                                <h3 className='deck-title'>{deck.title}</h3>
+                                <span className='card-count'>{deck.card_count || 0} cards</span>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -54,14 +101,16 @@ const MyDecks = () => {
                                     type="text"
                                     placeholder="Enter deck name..."
                                     autoFocus
+                                    value={newDeckName}
+                                    onChange={(e) => setNewDeckName(e.target.value)}
                                 />
                             </div>
 
                             <div className="modal-footer">
-                                <button className="cancel-button" onClick={() => setIsNewDeckModalOpened(false)}>
+                                <button className="cancel-button" onClick={handleCloseNewDeckModal}>
                                     Cancel
                                 </button>
-                                <button className="save-button">
+                                <button className="save-button" onClick={handleSaveDeck}>
                                     Save
                                 </button>
                             </div>

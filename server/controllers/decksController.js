@@ -1,14 +1,10 @@
-import { getDBConnection } from "../db/db";
+import { getDBConnection } from "../db/db.js";
 
 export async function getDecks(req, res) {
     try {
         const db = await getDBConnection()
 
-        if (!req.session.userId) {
-            return res.status(400).json({error: "Can't get deck: no active sesion"})
-        }
-
-        const decks = await db('SELECT * from decks WHERE user_id = ?', [req.session.userId])
+        const decks = await db.all('SELECT * from decks WHERE user_id = ?', [req.session.userId])
 
         return res.json(decks)
 
@@ -18,5 +14,22 @@ export async function getDecks(req, res) {
 }
 
 export async function addDeck(req, res) {
-    
+    try {
+
+        const db = await getDBConnection()
+
+        const {title} = req.body
+        const result = await db.run('INSERT INTO decks (title, user_id) VALUES (?, ?)', [title, req.session.userId])
+
+        const newDeck = {
+            id: result.lastID,
+            title: title,
+            user_id: req.session.userId
+        }
+
+        return res.status(201).json(newDeck)
+
+    } catch(err) {
+        res.status(500).json({error: "Server error"})
+    }
 }
