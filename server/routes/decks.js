@@ -6,4 +6,5 @@ export const decksRouter = express.Router()
 
 decksRouter.use(requireAuth)
 decksRouter.get('/', getDecks)
+decksRouter.get('/:deckId', getDeckById)
 decksRouter.post('/', addDeck)

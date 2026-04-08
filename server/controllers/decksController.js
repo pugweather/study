@@ -13,12 +13,31 @@ export async function getDecks(req, res) {
     }
 }
 
+export async function getDeckById(req, res) {
+    try {
+
+        const db = await getDBConnection()
+
+        const deckId = req.params.deckId
+        const deck = await db.get("SELECT * from decks WHERE user_id = ? AND id = ?", [req.session.userId, deckId])
+
+        if (!deck) {
+            return res.status(404).json({error: `Deck with id ${deckId} not found`})
+        }
+        
+        return res.json(deck)
+        
+    } catch(err) {
+        return res.status(500).json({error: "Server error"})
+    }   
+}
+
 export async function addDeck(req, res) {
     try {
 
         const db = await getDBConnection()
 
-        const {title} = req.body
+        const { title } = req.body
         const result = await db.run('INSERT INTO decks (title, user_id) VALUES (?, ?)', [title, req.session.userId])
 
         const newDeck = {
