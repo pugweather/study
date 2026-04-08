@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Modal from '../components/Modal'
 import './MyDecks.css'
+import { useNavigate } from 'react-router-dom'
 
 const MyDecks = () => {
 
@@ -9,6 +10,8 @@ const MyDecks = () => {
     const [isNewDeckModalOpened, setIsNewDeckModalOpened] = useState(false)
     const [newDeckName, setNewDeckName] = useState('')
     const [error, setError] = useState({})
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         getDecks()
@@ -61,6 +64,10 @@ const MyDecks = () => {
         }
     }
 
+    function handleDeckClick(deckId) {
+        navigate(`/decks/${deckId}`)
+    }
+
     return (
         <>
             <div className='page-wrapper'>
@@ -75,7 +82,7 @@ const MyDecks = () => {
 
                     <div className='decks-grid'>
                         {decks?.map(deck => (
-                            <div key={deck.id} className='deck-card'>
+                            <div key={deck.id} className='deck-card' onClick={() => handleDeckClick(deck.id)}>
                                 <h3 className='deck-title'>{deck.title}</h3>
                                 <span className='card-count'>{deck.card_count || 0} cards</span>
                             </div>

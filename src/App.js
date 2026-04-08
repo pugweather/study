@@ -5,6 +5,7 @@ import Signup from './pages/Signup'
 import Login from './pages/Login'
 import CreateFlashcards from './pages/CreateFlashcards'
 import MyDecks from './pages/MyDecks'
+import DeckDetail from './pages/DeckDetail'
 import './App.css'
 
 function App() {
@@ -24,6 +25,7 @@ const AppRouter = () => {
       <Route path='/signup' element={<Signup />} />
       <Route path='/login' element={<Login />} />
       <Route path='/my-decks' element={<MyDecks />} />
+      <Route path='/decks/:deckId' element={<DeckDetail />} />
       <Route path='/create-flashcards' element={<CreateFlashcards />} />
     </Routes>
   )

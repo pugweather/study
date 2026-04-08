@@ -13,14 +13,14 @@ async function createTable() {
     //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     // )`)
 
-    await db.exec(`CREATE TABLE decks (
+    await db.exec(`CREATE TABLE IF NOT EXISTS decks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
     )`)
 
-    await db.exec(`CREATE TABLE cards (
+    await db.exec(`CREATE TABLE IF NOT EXISTS cards (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         term TEXT NOT NULL,
         answer TEXT NOT NULL,
