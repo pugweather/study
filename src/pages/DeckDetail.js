@@ -1,16 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import './DeckDetail.css'
 
 const DeckDetail = () => {
 
-    const [cards, setCards] = useState([
-        { id: 1, term: 'Photosynthesis', answer: 'The process by which plants convert light energy into chemical energy' },
-        { id: 2, term: 'Mitochondria', answer: 'The powerhouse of the cell, responsible for producing ATP' },
-        { id: 3, term: 'DNA', answer: 'Deoxyribonucleic acid, the molecule that carries genetic information' },
-        { id: 4, term: 'Cell Membrane', answer: 'A protective barrier that controls what enters and exits the cell' },
-        { id: 5, term: 'Ribosome', answer: 'Cellular structure responsible for protein synthesis' }
-    ])
+    const [cards, setCards] = useState([])
+
+    const { deckId } = useParams()
+
+    useEffect(() => {
+        getCards()
+    }, [])
+
+    async function getCards() {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards`, {
+                credentials: "include"
+            })
+            if (!response.ok) {
+                throw new Error("Couldn't fetch cards for deck")
+            }
+            const data = await response.json()
+            setCards(data)
+        } catch (err) {
+            console.error("Error: ", err.message)
+        }
+    }
 
     return (
         <div className='page-wrapper'>
@@ -55,13 +71,7 @@ const DeckDetail = () => {
                     </div>
 
                     <div className='cards-list'>
-                        {[
-                            { id: 1, term: 'Photosynthesis', answer: 'The process by which plants convert light energy into chemical energy' },
-                            { id: 2, term: 'Mitochondria', answer: 'The powerhouse of the cell, responsible for producing ATP' },
-                            { id: 3, term: 'DNA', answer: 'Deoxyribonucleic acid, the molecule that carries genetic information' },
-                            { id: 4, term: 'Cell Membrane', answer: 'A protective barrier that controls what enters and exits the cell' },
-                            { id: 5, term: 'Ribosome', answer: 'Cellular structure responsible for protein synthesis' }
-                        ].map((card, index) => (
+                        {cards.map((card, index) => (
                             <div key={card.id} className='card-item'>
                                 <div className='card-number'>{index + 1}</div>
                                 <div className='card-content'>

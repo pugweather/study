@@ -4,7 +4,7 @@ export async function getDecks(req, res) {
     try {
         const db = await getDBConnection()
 
-        const decks = await db.all('SELECT * from decks WHERE user_id = ?', [req.session.userId])
+        const decks = await db.all('SELECT d.*, COUNT(c.id) as card_count FROM decks d LEFT JOIN cards c ON c.deck_id = d.id WHERE d.user_id = ? GROUP BY d.id', [req.session.userId])
 
         return res.json(decks)
 
