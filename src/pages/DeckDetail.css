@@ -354,7 +354,7 @@
     transform-style: preserve-3d;
 }
 
-.flashcard.flipped .flashcard-inner {
+.flashcard .flashcard-inner.flipped {
     transform: rotateY(180deg);
 }
 

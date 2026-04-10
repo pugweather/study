@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import './DeckDetail.css'
 import { useDebounce } from '../hooks/useDebounce'
+import { findByRole } from '@testing-library/dom'
 
 const DeckDetail = () => {
 
@@ -18,6 +19,11 @@ const DeckDetail = () => {
 
     const { deckId } = useParams()
 
+    // Study tab state
+    const [currCardIndex, setCurrCardIndex] = useState(0)
+    const [isFlipped, setIsFlipped] = useState(false)
+    const currentCard = filteredCards[currCardIndex]
+    
     useEffect(() => {
         getCards()
     }, [])
@@ -39,6 +45,19 @@ const DeckDetail = () => {
         } catch (err) {
             console.error("Error: ", err.message)
         }
+    }
+
+    // Study tab functions
+    function prevCard() {
+
+        if (currCardIndex === 0) {
+            setCurrCardIndex(filteredCards.length - 1)
+        } else {
+            setCurrCardIndex(prev => prev - 1)
+        }
+    }
+    function nextCard() {
+        setCurrCardIndex(prev => (prev + 1) % filteredCards.length)
     }
 
     return (
@@ -108,30 +127,30 @@ const DeckDetail = () => {
                 {activeTab === "study" && (
                     <div className='study-tab'>
                         <div className='study-progress'>
-                            Card 1 of 5
+                            Card {currCardIndex + 1} of {filteredCards.length}
                         </div>
-                        <div className='flashcard'>
-                            <div className='flashcard-inner'>
+                        <div className='flashcard' onClick={() => setIsFlipped(!isFlipped)}>
+                            <div className={`flashcard-inner ${isFlipped ? "flipped" : ''}`}>
                                 <div className='flashcard-front'>
                                     <div className='flashcard-label'>Term</div>
-                                    <div className='flashcard-text'>Photosynthesis</div>
+                                    <div className='flashcard-text'>{currentCard.term}</div>
                                     <div className='flashcard-hint'>Click to flip</div>
                                 </div>
                                 <div className='flashcard-back'>
                                     <div className='flashcard-label'>Answer</div>
-                                    <div className='flashcard-text'>The process by which plants convert light energy into chemical energy</div>
+                                    <div className='flashcard-text'>{currentCard.answer}</div>
                                     <div className='flashcard-hint'>Click to flip</div>
                                 </div>
                             </div>
                         </div>
                         <div className='study-controls'>
-                            <button className='study-btn'>
+                            <button className='study-btn' onClick={prevCard}>
                                 ← Previous
                             </button>
                             <button className='study-btn shuffle-btn'>
                                 Shuffle
                             </button>
-                            <button className='study-btn'>
+                            <button className='study-btn' onClick={nextCard}>
                                 Next →
                             </button>
                         </div>
