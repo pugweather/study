@@ -1,17 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import './DeckDetail.css'
+import { useDebounce } from '../hooks/useDebounce'
 
 const DeckDetail = () => {
 
+    const [searchTerm, setSearchTerm] = useState('')
     const [cards, setCards] = useState([])
+
+    const debouncedValue = useDebounce(searchTerm, 500)
+    const filteredCards = useMemo(() => {
+        return cards.filter(x => x.term.toLowerCase().includes(debouncedValue) || x.answer.toLowerCase().includes(debouncedValue))
+    }, [cards, debouncedValue])
 
     const { deckId } = useParams()
 
     useEffect(() => {
         getCards()
     }, [])
+
+    function handleFilterCards(e) {
+        setSearchTerm(e.target.value)
+    }
 
     async function getCards() {
         try {
@@ -34,9 +46,7 @@ const DeckDetail = () => {
             <div className='right-frame'>
                 <div className='deck-header'>
                     <div className='deck-header-left'>
-                        <button className='back-btn'>
-                            ← Back to Decks
-                        </button>
+                        <Link className='back-btn' to='/my-decks'>← Back to Decks</Link>
                         <h1 className='deck-title-large'>Biology 101</h1>
                         <span className='deck-card-count'>5 cards</span>
                     </div>
@@ -64,6 +74,7 @@ const DeckDetail = () => {
                             type='text'
                             className='search-input'
                             placeholder='Search cards...'
+                            onChange={handleFilterCards}
                         />
                         <button className='add-card-btn'>
                             + Add Card
@@ -71,7 +82,7 @@ const DeckDetail = () => {
                     </div>
 
                     <div className='cards-list'>
-                        {cards.map((card, index) => (
+                        {filteredCards.map((card, index) => (
                             <div key={card.id} className='card-item'>
                                 <div className='card-number'>{index + 1}</div>
                                 <div className='card-content'>
