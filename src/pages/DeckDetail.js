@@ -9,6 +9,7 @@ const DeckDetail = () => {
 
     const [searchTerm, setSearchTerm] = useState('')
     const [cards, setCards] = useState([])
+    const [activeTab, setActiveTab] = useState("cards") // cards | study | quiz
 
     const debouncedValue = useDebounce(searchTerm, 500)
     const filteredCards = useMemo(() => {
@@ -57,103 +58,112 @@ const DeckDetail = () => {
                 </div>
 
                 <div className='tabs'>
-                    <button className='tab tab-active'>
+                    <button className={`tab ${activeTab === "cards" ? "tab-active" : ""}`} onClick={() => setActiveTab("cards")}>
                         Cards
                     </button>
-                    <button className='tab'>
+                    <button className={`tab ${activeTab === "study" ? "tab-active" : ""}`} onClick={() => setActiveTab("study")}>
                         Study
                     </button>
-                    <button className='tab'>
+                    <button className={`tab ${activeTab === "quiz" ? "tab-active" : ""}`} onClick={() => setActiveTab("quiz")}>
                         Quiz
                     </button>
                 </div>
 
-                <div className='cards-tab'>
-                    <div className='cards-toolbar'>
-                        <input
-                            type='text'
-                            className='search-input'
-                            placeholder='Search cards...'
-                            onChange={handleFilterCards}
-                        />
-                        <button className='add-card-btn'>
-                            + Add Card
-                        </button>
-                    </div>
+                {/* Cards tab */}
+                {activeTab === "cards" && (
+                    <div className='cards-tab'>
+                        <div className='cards-toolbar'>
+                            <input
+                                type='text'
+                                className='search-input'
+                                placeholder='Search cards...'
+                                onChange={handleFilterCards}
+                            />
+                            <button className='add-card-btn'>
+                                + Add Card
+                            </button>
+                        </div>
 
-                    <div className='cards-list'>
-                        {filteredCards.map((card, index) => (
-                            <div key={card.id} className='card-item'>
-                                <div className='card-number'>{index + 1}</div>
-                                <div className='card-content'>
-                                    <div className='card-term'>{card.term}</div>
-                                    <div className='card-answer'>{card.answer}</div>
+                        <div className='cards-list'>
+                            {filteredCards.map((card, index) => (
+                                <div key={card.id} className='card-item'>
+                                    <div className='card-number'>{index + 1}</div>
+                                    <div className='card-content'>
+                                        <div className='card-term'>{card.term}</div>
+                                        <div className='card-answer'>{card.answer}</div>
+                                    </div>
+                                    <div className='card-actions'>
+                                        <button className='edit-card-btn'>Edit</button>
+                                        <button className='delete-card-btn'>
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className='card-actions'>
-                                    <button className='edit-card-btn'>Edit</button>
-                                    <button className='delete-card-btn'>
-                                        Delete
-                                    </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Study tab tab */}
+                {activeTab === "study" && (
+                    <div className='study-tab'>
+                        <div className='study-progress'>
+                            Card 1 of 5
+                        </div>
+                        <div className='flashcard'>
+                            <div className='flashcard-inner'>
+                                <div className='flashcard-front'>
+                                    <div className='flashcard-label'>Term</div>
+                                    <div className='flashcard-text'>Photosynthesis</div>
+                                    <div className='flashcard-hint'>Click to flip</div>
+                                </div>
+                                <div className='flashcard-back'>
+                                    <div className='flashcard-label'>Answer</div>
+                                    <div className='flashcard-text'>The process by which plants convert light energy into chemical energy</div>
+                                    <div className='flashcard-hint'>Click to flip</div>
                                 </div>
                             </div>
-                        ))}
+                        </div>
+                        <div className='study-controls'>
+                            <button className='study-btn'>
+                                ← Previous
+                            </button>
+                            <button className='study-btn shuffle-btn'>
+                                Shuffle
+                            </button>
+                            <button className='study-btn'>
+                                Next →
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
 
-                <div className='study-tab' style={{display: 'none'}}>
-                    <div className='study-progress'>
-                        Card 1 of 5
-                    </div>
-                    <div className='flashcard'>
-                        <div className='flashcard-inner'>
-                            <div className='flashcard-front'>
-                                <div className='flashcard-label'>Term</div>
-                                <div className='flashcard-text'>Photosynthesis</div>
-                                <div className='flashcard-hint'>Click to flip</div>
+                {/* Quiz tab */}
+                {activeTab === "quiz" && (
+                    <div className='quiz-tab'>
+                        <h2 className='quiz-title'>Choose a Quiz Type</h2>
+                        <div className='quiz-types'>
+                            <div className='quiz-type-card'>
+                                <div className='quiz-icon'>📝</div>
+                                <h3>Fill in the Blank</h3>
+                                <p>Complete sentences using terms from your deck</p>
+                                <button className='start-quiz-btn'>Start Quiz</button>
                             </div>
-                            <div className='flashcard-back'>
-                                <div className='flashcard-label'>Answer</div>
-                                <div className='flashcard-text'>The process by which plants convert light energy into chemical energy</div>
-                                <div className='flashcard-hint'>Click to flip</div>
+                            <div className='quiz-type-card'>
+                                <div className='quiz-icon'>✍️</div>
+                                <h3>Use in Sentence</h3>
+                                <p>Write sentences using the given terms</p>
+                                <button className='start-quiz-btn'>Start Quiz</button>
+                            </div>
+                            <div className='quiz-type-card'>
+                                <div className='quiz-icon'>🎯</div>
+                                <h3>Multiple Choice</h3>
+                                <p>Test your knowledge with multiple choice questions</p>
+                                <button className='start-quiz-btn'>Start Quiz</button>
                             </div>
                         </div>
                     </div>
-                    <div className='study-controls'>
-                        <button className='study-btn'>
-                            ← Previous
-                        </button>
-                        <button className='study-btn shuffle-btn'>
-                            Shuffle
-                        </button>
-                        <button className='study-btn'>
-                            Next →
-                        </button>
-                    </div>
-                </div>
-
-                <div className='quiz-tab' style={{display: 'none'}}>
-                    <h2 className='quiz-title'>Choose a Quiz Type</h2>
-                    <div className='quiz-types'>
-                        <div className='quiz-type-card'>
-                            <div className='quiz-icon'>📝</div>
-                            <h3>Fill in the Blank</h3>
-                            <p>Complete sentences using terms from your deck</p>
-                            <button className='start-quiz-btn'>Start Quiz</button>
-                        </div>
-                        <div className='quiz-type-card'>
-                            <div className='quiz-icon'>✍️</div>
-                            <h3>Use in Sentence</h3>
-                            <p>Write sentences using the given terms</p>
-                            <button className='start-quiz-btn'>Start Quiz</button>
-                        </div>
-                        <div className='quiz-type-card'>
-                            <div className='quiz-icon'>🎯</div>
-                            <h3>Multiple Choice</h3>
-                            <p>Test your knowledge with multiple choice questions</p>
-                            <button className='start-quiz-btn'>Start Quiz</button>
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     )
