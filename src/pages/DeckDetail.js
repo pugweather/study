@@ -22,7 +22,9 @@ const DeckDetail = () => {
     // Study tab state
     const [currCardIndex, setCurrCardIndex] = useState(0)
     const [isFlipped, setIsFlipped] = useState(false)
-    const currentCard = filteredCards[currCardIndex]
+    const [shuffledCards, setShuffledCards] = useState(null)
+    const studyCards = shuffledCards || cards
+    const currentCard = studyCards[currCardIndex]
     
     useEffect(() => {
         getCards()
@@ -56,8 +58,24 @@ const DeckDetail = () => {
             setCurrCardIndex(prev => prev - 1)
         }
     }
+
     function nextCard() {
         setCurrCardIndex(prev => (prev + 1) % filteredCards.length)
+    }
+
+    function shuffleCards() {
+        const shuffled = [...cards]
+        for (let i = 0; i < shuffled.length - 1; i++) {
+            const randomIndex = Math.floor(Math.random() * (shuffled.length - 1 - i)) + i;
+            [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]]
+        }
+        return shuffled
+    }
+
+    function handleShuffleCards() {
+        setShuffledCards(shuffleCards())
+        setCurrCardIndex(0)
+        setIsFlipped(false)
     }
 
     return (
@@ -127,7 +145,7 @@ const DeckDetail = () => {
                 {activeTab === "study" && (
                     <div className='study-tab'>
                         <div className='study-progress'>
-                            Card {currCardIndex + 1} of {filteredCards.length}
+                            Card {currCardIndex + 1} of {studyCards.length}
                         </div>
                         <div className='flashcard' onClick={() => setIsFlipped(!isFlipped)}>
                             <div className={`flashcard-inner ${isFlipped ? "flipped" : ''}`}>
@@ -147,7 +165,7 @@ const DeckDetail = () => {
                             <button className='study-btn' onClick={prevCard}>
                                 ← Previous
                             </button>
-                            <button className='study-btn shuffle-btn'>
+                            <button className='study-btn shuffle-btn' onClick={handleShuffleCards}>
                                 Shuffle
                             </button>
                             <button className='study-btn' onClick={nextCard}>

@@ -11,7 +11,7 @@ const Navbar = () => {
         <nav>
             <div className="nav-container">
                 <div className="top-nav-wrapper">
-                    <img src="logo192.png" alt="Logo" />
+                    <img src="/logo192.png" alt="Logo" />
                     <div>Luminora</div>
                 </div>
                 <ul>
