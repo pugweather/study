@@ -122,6 +122,24 @@ nav ul li:hover .nav-icon{
     border-color: #059669;
 }
 
+.logout-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #ef4444;
+    color: white;
+    border: none;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
 .welcome-text {
     padding: 1rem 2rem;
     margin-top: 1rem;
