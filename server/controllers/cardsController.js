@@ -1,4 +1,5 @@
 import { getDBConnection } from "../db/db.js";
+import { verifyDeckOwnership } from "../services/deckServices.js";
 
 export async function getDeckCards(req, res) {
     try {
@@ -10,6 +11,15 @@ export async function getDeckCards(req, res) {
 
         return res.json(cards)
 
+    } catch(err) {
+        return res.status(500).json({error: "Server error"})
+    }
+}
+export async function deleteCard(req, res) {
+    try {
+        const db = await getDBConnection()
+        const { cardId } = req.params
+        await db.run("DELETE FROM cards WHERE id = ?", [req.session.userId])
     } catch(err) {
         return res.status(500).json({error: "Server error"})
     }

@@ -13,3 +13,4 @@ decksRouter.post('/', addDeck)
 
 // Cards
 decksRouter.get('/:deckId/cards', getDeckCards)
+decksRoutere.delete('/deckId/cards/:cardId', deleteCard)
