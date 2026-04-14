@@ -49,6 +49,26 @@ const DeckDetail = () => {
         }
     }
 
+    //
+    async function handleDeleteCard(cardId) {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards/${cardId}`, {
+                method: "DELETE",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            if (!response.ok) {
+                throw new Error("Unable to delete card")
+            }
+            setCards(prevCards => prevCards.filter(card => card.id !== cardId))
+
+        } catch(err) {
+            console.error("Error:", err.message)
+        }
+    }
+
     // Study tab functions
     function prevCard() {
 
@@ -131,7 +151,7 @@ const DeckDetail = () => {
                                     </div>
                                     <div className='card-actions'>
                                         <button className='edit-card-btn'>Edit</button>
-                                        <button className='delete-card-btn'>
+                                        <button className='delete-card-btn' onClick={() => handleDeleteCard(card.id)}>
                                             Delete
                                         </button>
                                     </div>
