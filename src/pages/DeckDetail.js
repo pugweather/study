@@ -142,6 +142,37 @@ const DeckDetail = () => {
                         </div>
 
                         <div className='cards-list'>
+
+                            {/* Adding card */}
+                            <div className='add-card-form'>
+                                <div className='add-card-form-header'>
+                                    <h3>Add New Card</h3>
+                                </div>
+                                <div className='add-card-form-body'>
+                                    <div className='form-group'>
+                                        <label>Term</label>
+                                        <input 
+                                            type='text' 
+                                            className='form-input'
+                                            placeholder='Enter term...'
+                                        />
+                                    </div>
+                                    <div className='form-group'>
+                                        <label>Answer</label>
+                                        <textarea 
+                                            className='form-textarea'
+                                            placeholder='Enter answer...'
+                                            rows='3'
+                                        />
+                                    </div>
+                                    <div className='form-actions'>
+                                        <button className='cancel-btn'>Cancel</button>
+                                        <button className='save-btn'>Save Card</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cards list */}
                             {filteredCards.map((card, index) => (
                                 <div key={card.id} className='card-item'>
                                     <div className='card-number'>{index + 1}</div>
