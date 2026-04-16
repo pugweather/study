@@ -1,3 +1,4 @@
+import { verify } from "node:crypto";
 import { getDBConnection } from "../db/db.js";
 import { verifyDeckOwnership } from "../services/deckServices.js";
 
@@ -19,7 +20,6 @@ export async function deleteCard(req, res) {
     try {
         const db = await getDBConnection()
         const { deckId, cardId } = req.params
-        console.log("deckid + cardid, ", deckId, cardId)
         const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
         if (!isDeckOwner) {
             return res.status(403).json({error: "Deck doesn't exist or user doesn't own this deck"})
@@ -31,6 +31,31 @@ export async function deleteCard(req, res) {
         }
 
         return res.json({message: "Card deleted from deck"})
+
+    } catch(err) {
+        return res.status(500).json({error: "Server error"})
+    }
+}
+
+export async function addCard(req, res) {
+    try {
+        const db = await getDBConnection()
+        const {deckId} = req.params
+        const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
+        
+        if (!isDeckOwner) {
+            return res.status(403).json({error: "Deck doesn't exist or user doesn't own this deck"})
+        }
+
+        const {term, answer} = req.body
+        const result = await db.run(`INSERT INTO cards (term, answer, deck_id) VALUES (?, ?, ?)`, [term, answer, deckId])
+
+        return res.status(201).json({
+            id: result.lastID,
+            term: term,
+            answer: answer,
+            deck_id: deckId
+        })
 
     } catch(err) {
         return res.status(500).json({error: "Server error"})

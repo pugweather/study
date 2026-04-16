@@ -1,7 +1,7 @@
 import express from 'express'
 import { requireAuth } from '../middleware/auth.js'
 import { addDeck, getDecks, getDeckById } from '../controllers/decksController.js'
-import { getDeckCards, deleteCard } from '../controllers/cardsController.js'
+import { getDeckCards, deleteCard, addCard } from '../controllers/cardsController.js'
 
 export const decksRouter = express.Router()
 
@@ -13,4 +13,5 @@ decksRouter.post('/', addDeck)
 
 // Cards
 decksRouter.get('/:deckId/cards', getDeckCards)
+decksRouter.post('/:deckId/cards', addCard)
 decksRouter.delete('/:deckId/cards/:cardId', deleteCard)

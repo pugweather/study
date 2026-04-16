@@ -37,11 +37,11 @@ const Signup = () => {
         // General errors
         for (const [key, value] of Object.entries(fields)) {
             if (!value) {
-            if (key === "confirmPassword") {
-                newErrors[key] = "must enter password to confirm"
-            } else {
-                newErrors[key] = `${key} is required`
-            }
+                if (key === "confirmPassword") {
+                    newErrors[key] = "must enter password to confirm"
+                } else {
+                    newErrors[key] = `${key} is required`
+                }
             }
         }
 

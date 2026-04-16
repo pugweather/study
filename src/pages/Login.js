@@ -10,8 +10,6 @@ const Login = () => {
     const navigate = useNavigate()
     const {user, getUser} = useAuth()
 
-    console.log(user)
-
     const [formData, setFormData] = useState({
         username: '',
         password: ''

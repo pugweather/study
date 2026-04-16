@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom"
+import './Modal.css'
 
 const Modal = ({ isOpen, onClose, children }) => {
 

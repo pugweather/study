@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import './DeckDetail.css'
 import { useDebounce } from '../hooks/useDebounce'
 import { findByRole } from '@testing-library/dom'
+import Modal from '../components/Modal'
 
 const DeckDetail = () => {
 
@@ -18,6 +19,13 @@ const DeckDetail = () => {
     }, [cards, debouncedValue])
 
     const { deckId } = useParams()
+
+    // Cards tab state
+    const [isNewCardOpened, setIsNewCardOpened] = useState(false)
+    const [newCard, setNewCard] = useState({term: '', answer: ''})
+    const [editingCard, setEditingCard] = useState({id: null, term: '', answer: ''})
+    const [cardError, setCardError] = useState('')
+    const [isDeleteDeckModalOpened, setIsDeleteDeckModalOpened] = useState(false)
 
     // Study tab state
     const [currCardIndex, setCurrCardIndex] = useState(0)
@@ -49,7 +57,6 @@ const DeckDetail = () => {
         }
     }
 
-    //
     async function handleDeleteCard(cardId) {
         try {
             const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards/${cardId}`, {
@@ -68,6 +75,68 @@ const DeckDetail = () => {
             console.error("Error:", err.message)
         }
     }
+
+    // Card tab functions
+    function handleOpenNewCard() {
+        setIsNewCardOpened(true)
+        handleCloseEditingCard()
+    }
+
+    function handleCloseNewCard() {
+        setNewCard({term: '', answer: ''})
+        setCardError('')
+        setIsNewCardOpened(false)
+    }
+
+    async function handleAddNewCard() {
+
+        const {term, answer} = newCard
+
+        if (!term.length || !answer.length) {
+            setCardError("term and answer must be at least one character long")
+            return
+        }
+
+        try {
+            
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({term, answer})
+            })
+            if (!response.ok) {
+                throw new Error("Error adding new card")
+            }
+            const newCardData = await response.json()
+            setCardError('')
+            setCards(prevCards => [...prevCards, newCardData])
+            
+        } catch(err) {
+            console.error("Error: ", err.message)
+        }
+    }
+
+    function handleSetCardToEditMode(card) {
+        const {id, term, answer} = card
+        setEditingCard({
+            id: id,
+            term: term,
+            answer: answer
+        })
+        handleCloseNewCard()
+    }
+
+    function handleCloseEditingCard() {
+        setEditingCard({
+            id: null,
+            term: '',
+            answer: ''
+        })
+    }
+
 
     // Study tab functions
     function prevCard() {
@@ -136,14 +205,15 @@ const DeckDetail = () => {
                                 placeholder='Search cards...'
                                 onChange={handleFilterCards}
                             />
-                            <button className='add-card-btn'>
+                            <button className='add-card-btn' onClick={handleOpenNewCard}>
                                 + Add Card
                             </button>
                         </div>
 
                         <div className='cards-list'>
 
-                            {/* Adding card */}
+                            {/* Adding new card */}
+                            {isNewCardOpened && (
                             <div className='add-card-form'>
                                 <div className='add-card-form-header'>
                                     <h3>Add New Card</h3>
@@ -155,6 +225,7 @@ const DeckDetail = () => {
                                             type='text' 
                                             className='form-input'
                                             placeholder='Enter term...'
+                                            onChange={(e) => setNewCard(prev => ({...prev, term: e.target.value}))}
                                         />
                                     </div>
                                     <div className='form-group'>
@@ -163,17 +234,53 @@ const DeckDetail = () => {
                                             className='form-textarea'
                                             placeholder='Enter answer...'
                                             rows='3'
+                                            onChange={(e) => setNewCard(prev => ({...prev, answer: e.target.value}))}
                                         />
                                     </div>
+                                    {cardError && <p className='form-error'>{cardError}</p>}
                                     <div className='form-actions'>
-                                        <button className='cancel-btn'>Cancel</button>
-                                        <button className='save-btn'>Save Card</button>
+                                        <button className='cancel-btn' onClick={handleCloseNewCard}>Cancel</button>
+                                        <button className='save-btn' onClick={handleAddNewCard}>Save Card</button>
                                     </div>
                                 </div>
                             </div>
+                            )}
 
                             {/* Cards list */}
                             {filteredCards.map((card, index) => (
+                                editingCard.id === card.id ? 
+                                <div className='add-card-form'>
+                                    <div className='add-card-form-header'>
+                                        <h3>Add New Card</h3>
+                                    </div>
+                                    <div className='add-card-form-body'>
+                                        <div className='form-group'>
+                                            <label>Term</label>
+                                            <input 
+                                                type='text' 
+                                                className='form-input'
+                                                placeholder='Enter term...'
+                                                value={editingCard.term}
+                                                onChange={(e) => setEditingCard(prev => ({...prev, term: e.target.value}))}
+                                            />
+                                        </div>
+                                        <div className='form-group'>
+                                            <label>Answer</label>
+                                            <textarea 
+                                                className='form-textarea'
+                                                placeholder='Enter answer...'
+                                                rows='3'
+                                                value={editingCard.answer}
+                                                onChange={(e) => setEditingCard(prev => ({...prev, answer: e.target.value}))}
+                                            />
+                                        </div>
+                                        {cardError && <p className='form-error'>{cardError}</p>}
+                                        <div className='form-actions'>
+                                            <button className='cancel-btn' onClick={handleCloseEditingCard}>Cancel</button>
+                                            <button className='save-btn' onClick={handleAddNewCard}>Save Card</button>
+                                        </div>
+                                    </div>
+                                </div> :
                                 <div key={card.id} className='card-item'>
                                     <div className='card-number'>{index + 1}</div>
                                     <div className='card-content'>
@@ -181,7 +288,7 @@ const DeckDetail = () => {
                                         <div className='card-answer'>{card.answer}</div>
                                     </div>
                                     <div className='card-actions'>
-                                        <button className='edit-card-btn'>Edit</button>
+                                        <button className='edit-card-btn' onClick={() => handleSetCardToEditMode(card)}>Edit</button>
                                         <button className='delete-card-btn' onClick={() => handleDeleteCard(card.id)}>
                                             Delete
                                         </button>
@@ -191,6 +298,32 @@ const DeckDetail = () => {
                         </div>
                     </div>
                 )}
+
+                <Modal isOpen={isDeleteDeckModalOpened} onClose={() => setIsDeleteDeckModalOpened(false)}>
+                    <div className="modal-overlay" onClick={() => setIsDeleteDeckModalOpened(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2>Create New Deck</h2>
+                                <button className="modal-close-btn" onClick={() => setIsDeleteDeckModalOpened(false)}>
+                                    ×
+                                </button>
+                            </div>
+                            
+                            <div className="modal-body">
+                                <p>Are you sure you want to delete <strong>Biology 101</strong>? This action cannot be undone.</p>
+                            </div>
+
+                            <div className="modal-footer">
+                                <button className="cancel-btn" onClick={handleCloseDeleteDeckModal}>
+                                    Cancel
+                                </button>
+                                <button className="save-btn" onClick={handleDeleteDeck}>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
 
                 {/* Study tab tab */}
                 {activeTab === "study" && (
