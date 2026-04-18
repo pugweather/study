@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import './DeckDetail.css'
@@ -10,6 +10,7 @@ import Modal from '../components/Modal'
 const DeckDetail = () => {
 
     const [searchTerm, setSearchTerm] = useState('')
+    const [deck, setDeck] = useState([])
     const [cards, setCards] = useState([])
     const [activeTab, setActiveTab] = useState("cards") // cards | study | quiz
 
@@ -19,6 +20,7 @@ const DeckDetail = () => {
     }, [cards, debouncedValue])
 
     const { deckId } = useParams()
+    const navigate = useNavigate()
 
     // Cards tab state
     const [isNewCardOpened, setIsNewCardOpened] = useState(false)
@@ -26,6 +28,7 @@ const DeckDetail = () => {
     const [editingCard, setEditingCard] = useState({id: null, term: '', answer: ''})
     const [cardError, setCardError] = useState('')
     const [isDeleteDeckModalOpened, setIsDeleteDeckModalOpened] = useState(false)
+    const [isEditDeckModalOpened, setIsEditDeckModalOpened] = useState(false)
 
     // Study tab state
     const [currCardIndex, setCurrCardIndex] = useState(0)
@@ -36,12 +39,29 @@ const DeckDetail = () => {
     
     useEffect(() => {
         getCards()
+        getDeck()
     }, [])
 
+    console.log(deck)
+    
     function handleFilterCards(e) {
         setSearchTerm(e.target.value)
     }
 
+    async function getDeck() {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/`, {
+                credentials: "include"
+            })
+            if (!response.ok) {
+                throw new Error("Couldn't get deck")
+            }
+            const deckData = await response.json()
+            setDeck(deckData)
+        } catch (err) {
+            console.error("Error: ", err.message)
+        }
+    }
     async function getCards() {
         try {
             const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards`, {
@@ -76,6 +96,46 @@ const DeckDetail = () => {
         }
     }
 
+    async function handleDeleteDeck() {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}`, {
+                method: "DELETE",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+            if (!response.ok) {
+                throw new Error("Failed to delete deck")
+            } 
+            navigate("/my-decks")
+        } catch(err) {
+            console.log("Error: ", err.message)
+        }
+    }
+
+    async function handleUpdateDeck() {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}`)
+            if (!response.ok) {
+                throw new Error("Couldn't update deck")
+            }
+            setDeck(prevDecks => function() {
+                return prevDecks.map(deck => deck.id === deckId ? {...deck, title: "something"} : deck)
+            })
+        } catch(err) {
+            console.error("Error: ", err.message)
+        }
+    }
+
+    // Delete & Edit deck modals
+    function handleCloseDeleteDeckModal() {
+        setIsDeleteDeckModalOpened(false)
+    }
+
+    function handleCloseEditDeckModal() {
+        setIsEditDeckModalOpened(false)
+    }
     // Card tab functions
     function handleOpenNewCard() {
         setIsNewCardOpened(true)
@@ -179,7 +239,7 @@ const DeckDetail = () => {
                     </div>
                     <div className='deck-header-right'>
                         <button className='deck-action-btn edit-btn'>Edit Deck</button>
-                        <button className='deck-action-btn delete-btn'>Delete Deck</button>
+                        <button className='deck-action-btn delete-btn' onClick={() => setIsDeleteDeckModalOpened(true)}>Delete Deck</button>
                     </div>
                 </div>
 
@@ -299,11 +359,12 @@ const DeckDetail = () => {
                     </div>
                 )}
 
+                {/* Delete deck Modal */}
                 <Modal isOpen={isDeleteDeckModalOpened} onClose={() => setIsDeleteDeckModalOpened(false)}>
                     <div className="modal-overlay" onClick={() => setIsDeleteDeckModalOpened(false)}>
                         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                             <div className="modal-header">
-                                <h2>Create New Deck</h2>
+                                <h2>Delete Deck</h2>
                                 <button className="modal-close-btn" onClick={() => setIsDeleteDeckModalOpened(false)}>
                                     ×
                                 </button>
@@ -317,8 +378,35 @@ const DeckDetail = () => {
                                 <button className="cancel-btn" onClick={handleCloseDeleteDeckModal}>
                                     Cancel
                                 </button>
-                                <button className="save-btn" onClick={handleDeleteDeck}>
-                                    Save
+                                <button className="delete-btn" onClick={handleDeleteDeck}>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+
+                {/* Edit deck name modal */}
+                <Modal isOpen={isDeleteDeckModalOpened} onClose={() => setIsEditDeckModalOpened(false)}>
+                    <div className="modal-overlay" onClick={() => setIsEditDeckModalOpened(false)}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2>Delete Deck</h2>
+                                <button className="modal-close-btn" onClick={() => setIsEditDeckModalOpened(false)}>
+                                    ×
+                                </button>
+                            </div>
+                            
+                            <div className="modal-body">
+                                <p>Are you sure you want to delete <strong>Biology 101</strong>? This action cannot be undone.</p>
+                            </div>
+
+                            <div className="modal-footer">
+                                <button className="cancel-btn" onClick={handleCloseEditDeckModal}>
+                                    Cancel
+                                </button>
+                                <button className="save-btn" onClick={handleUpdateDeck}>
+                                    Delete
                                 </button>
                             </div>
                         </div>

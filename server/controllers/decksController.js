@@ -1,4 +1,5 @@
 import { getDBConnection } from "../db/db.js";
+import { verifyDeckOwnership } from "../services/deckServices.js";
 
 export async function getDecks(req, res) {
     try {
@@ -50,5 +51,29 @@ export async function addDeck(req, res) {
 
     } catch(err) {
         res.status(500).json({error: "Server error"})
+    }
+}
+
+export async function deleteDeck(req, res) {
+    try {
+
+        const db = await getDBConnection()
+
+        const { deckId } = req.params
+
+        const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
+        if (!isDeckOwner) {
+            return res.status(403).json({error: "Deck doesn't exist or user doesn't own this deck"})
+        }
+
+        const result = await db.run('DELETE FROM decks WHERE id = ?', [deckId])
+        if (result.changes === 0) {
+            return res.status(404).json({error: "Deck not found"})
+        }
+
+        return res.json({message: "Deck deleted"})
+
+    } catch(err) {
+        return res.status(500).json({error: "Server error"})
     }
 }
