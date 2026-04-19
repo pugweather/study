@@ -42,8 +42,6 @@ const DeckDetail = () => {
         getCards()
         getDeck()
     }, [])
-
-    console.log(deck)
     
     function handleFilterCards(e) {
         setSearchTerm(e.target.value)
@@ -116,7 +114,7 @@ const DeckDetail = () => {
         }
     }
 
-    async function handleUpdateDeck() {
+    async function handleUpdateDeckName() {
         try {
             const response = await fetch(`http://localhost:8000/api/decks/${deckId}`, {
                 method: "PUT",
@@ -129,9 +127,8 @@ const DeckDetail = () => {
             if (!response.ok) {
                 throw new Error("Couldn't update deck")
             }
-            setDeck(prevDecks => function() {
-                return prevDecks.map(deck => deck.id === deckId ? {...deck, title: editDeckName} : deck)
-            })
+            setDeck(prev => ({...prev, title: editDeckName}))
+            handleCloseEditDeckModal()
         } catch(err) {
             console.error("Error: ", err.message)
         }
@@ -146,6 +143,12 @@ const DeckDetail = () => {
         setIsEditDeckModalOpened(false)
         setEditDeckName(deck.title || '')
     }
+
+    function handleOpenEditDeckModal() {
+        setIsEditDeckModalOpened(true)
+        setEditDeckName(deck.title || '')
+    }
+
     // Card tab functions
     function handleOpenNewCard() {
         setIsNewCardOpened(true)
@@ -248,7 +251,7 @@ const DeckDetail = () => {
                         <span className='deck-card-count'>5 cards</span>
                     </div>
                     <div className='deck-header-right'>
-                        <button className='deck-action-btn edit-btn' onClick={() => setIsEditDeckModalOpened(true)}>Edit Deck</button>
+                        <button className='deck-action-btn edit-btn' onClick={handleOpenEditDeckModal}>Edit Deck</button>
                         <button className='deck-action-btn delete-btn' onClick={() => setIsDeleteDeckModalOpened(true)}>Delete Deck</button>
                     </div>
                 </div>
@@ -423,7 +426,7 @@ const DeckDetail = () => {
                                 <button className="cancel-btn" onClick={handleCloseEditDeckModal}>
                                     Cancel
                                 </button>
-                                <button className="save-btn" onClick={handleUpdateDeck}>
+                                <button className="save-btn" onClick={handleUpdateDeckName}>
                                     Save
                                 </button>
                             </div>
