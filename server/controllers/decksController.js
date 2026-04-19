@@ -54,6 +54,27 @@ export async function addDeck(req, res) {
     }
 }
 
+export async function updateDeck(req, res) {
+    try {
+        const db = await getDBConnection()
+
+        const { deckId } = req.params
+        const { title } = req.body
+        const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
+        if (!isDeckOwner) {
+            return res.status(403).status({error: "Deck doesn't exist or user doesn't own this deck"})
+        }
+        const result = await db.run("UPDATE decks SET title = ? WHERE id = ?", [title, deckId])
+        if (result.changes === 0) {
+            return res.status(404).status({error: "Deck not found"})
+        }
+        return res.json({message: "Deck updated"})
+
+    } catch(err) {
+        res.status(500).json({error: "Server error"})
+    }
+}
+
 export async function deleteDeck(req, res) {
     try {
 

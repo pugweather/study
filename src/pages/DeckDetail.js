@@ -10,7 +10,7 @@ import Modal from '../components/Modal'
 const DeckDetail = () => {
 
     const [searchTerm, setSearchTerm] = useState('')
-    const [deck, setDeck] = useState([])
+    const [deck, setDeck] = useState({})
     const [cards, setCards] = useState([])
     const [activeTab, setActiveTab] = useState("cards") // cards | study | quiz
 
@@ -29,6 +29,7 @@ const DeckDetail = () => {
     const [cardError, setCardError] = useState('')
     const [isDeleteDeckModalOpened, setIsDeleteDeckModalOpened] = useState(false)
     const [isEditDeckModalOpened, setIsEditDeckModalOpened] = useState(false)
+    const [editDeckName, setEditDeckName] = useState(deck.title || '')
 
     // Study tab state
     const [currCardIndex, setCurrCardIndex] = useState(0)
@@ -58,6 +59,7 @@ const DeckDetail = () => {
             }
             const deckData = await response.json()
             setDeck(deckData)
+            setEditDeckName(deckData.title || '')
         } catch (err) {
             console.error("Error: ", err.message)
         }
@@ -116,12 +118,19 @@ const DeckDetail = () => {
 
     async function handleUpdateDeck() {
         try {
-            const response = await fetch(`http://localhost:8000/api/decks/${deckId}`)
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({title: editDeckName})
+            })
             if (!response.ok) {
                 throw new Error("Couldn't update deck")
             }
             setDeck(prevDecks => function() {
-                return prevDecks.map(deck => deck.id === deckId ? {...deck, title: "something"} : deck)
+                return prevDecks.map(deck => deck.id === deckId ? {...deck, title: editDeckName} : deck)
             })
         } catch(err) {
             console.error("Error: ", err.message)
@@ -135,6 +144,7 @@ const DeckDetail = () => {
 
     function handleCloseEditDeckModal() {
         setIsEditDeckModalOpened(false)
+        setEditDeckName(deck.title || '')
     }
     // Card tab functions
     function handleOpenNewCard() {
@@ -234,11 +244,11 @@ const DeckDetail = () => {
                 <div className='deck-header'>
                     <div className='deck-header-left'>
                         <Link className='back-btn' to='/my-decks'>← Back to Decks</Link>
-                        <h1 className='deck-title-large'>Biology 101</h1>
+                        <h1 className='deck-title-large'>{deck.title || "My Deck"}</h1>
                         <span className='deck-card-count'>5 cards</span>
                     </div>
                     <div className='deck-header-right'>
-                        <button className='deck-action-btn edit-btn'>Edit Deck</button>
+                        <button className='deck-action-btn edit-btn' onClick={() => setIsEditDeckModalOpened(true)}>Edit Deck</button>
                         <button className='deck-action-btn delete-btn' onClick={() => setIsDeleteDeckModalOpened(true)}>Delete Deck</button>
                     </div>
                 </div>
@@ -387,18 +397,26 @@ const DeckDetail = () => {
                 </Modal>
 
                 {/* Edit deck name modal */}
-                <Modal isOpen={isDeleteDeckModalOpened} onClose={() => setIsEditDeckModalOpened(false)}>
+                <Modal isOpen={isEditDeckModalOpened} onClose={() => setIsEditDeckModalOpened(false)}>
                     <div className="modal-overlay" onClick={() => setIsEditDeckModalOpened(false)}>
                         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                             <div className="modal-header">
-                                <h2>Delete Deck</h2>
+                                <h2>Edit Deck</h2>
                                 <button className="modal-close-btn" onClick={() => setIsEditDeckModalOpened(false)}>
                                     ×
                                 </button>
                             </div>
                             
                             <div className="modal-body">
-                                <p>Are you sure you want to delete <strong>Biology 101</strong>? This action cannot be undone.</p>
+                                <label htmlFor="edit-deck-name">Deck Name</label>
+                                <input
+                                    id="edit-deck-name"
+                                    type="text"
+                                    placeholder="Enter deck name..."
+                                    autoFocus
+                                    value={editDeckName}
+                                    onChange={(e) => setEditDeckName(e.target.value)}
+                                />
                             </div>
 
                             <div className="modal-footer">
@@ -406,7 +424,7 @@ const DeckDetail = () => {
                                     Cancel
                                 </button>
                                 <button className="save-btn" onClick={handleUpdateDeck}>
-                                    Delete
+                                    Save
                                 </button>
                             </div>
                         </div>
