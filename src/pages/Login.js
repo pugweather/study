@@ -73,7 +73,7 @@ const Login = () => {
             await getUser()
 
             // Success
-            navigate('/create-flashcards')
+            navigate('/my-decks')
 
         } catch(err) {
             setErrors(prev => ({...prev, general: err.message}))
