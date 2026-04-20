@@ -192,6 +192,36 @@ const DeckDetail = () => {
         }
     }
 
+    async function handleUpdateCard() {
+
+        const { id, term, answer } = editingCard
+
+        if (!term.length || !answer.length) {
+            setCardError("term and answer must be at least one character long")
+            return
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/cards/${id}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({term, answer})
+            })
+            if (!response.ok) {
+                throw new Error("Failed to update card")
+            }
+            setCards(prevCards => prevCards.map(card => {
+                return card.id === id ? {...card, term: term, answer: answer} : card
+            }))
+            handleCloseEditingCard()
+        } catch(err) {
+            console.error("Error: ", err.message)
+        }
+    }
+
     function handleSetCardToEditMode(card) {
         const {id, term, answer} = card
         setEditingCard({
@@ -208,6 +238,7 @@ const DeckDetail = () => {
             term: '',
             answer: ''
         })
+        setCardError('')
     }
 
 
@@ -350,7 +381,7 @@ const DeckDetail = () => {
                                         {cardError && <p className='form-error'>{cardError}</p>}
                                         <div className='form-actions'>
                                             <button className='cancel-btn' onClick={handleCloseEditingCard}>Cancel</button>
-                                            <button className='save-btn' onClick={handleAddNewCard}>Save Card</button>
+                                            <button className='save-btn' onClick={handleUpdateCard}>Save Card</button>
                                         </div>
                                     </div>
                                 </div> :

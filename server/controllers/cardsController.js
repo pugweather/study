@@ -37,6 +37,30 @@ export async function deleteCard(req, res) {
     }
 }
 
+export async function updateCard(req, res) {
+    try {
+
+        const { deckId, cardId } = req.params
+        const { term, answer } = req.body
+        const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
+        if (!isDeckOwner) {
+            return res.status(403).json({error: "Deck doesn't exist or user doesn't own this deck"})
+        }
+
+        const db = await getDBConnection()
+
+        const result = await db.run('UPDATE cards SET term = ?, answer = ? WHERE id = ?', [term, answer, cardId])
+        if (result.changes === 0) {
+            return res.status(404).json({error: "Card not found"})
+        }
+
+        return res.json({message: "Card updated"})
+
+    } catch(err) {
+        return res.status(500).json({error: "Server error"})
+    }
+}
+
 export async function addCard(req, res) {
     try {
         const db = await getDBConnection()
