@@ -16,8 +16,6 @@ const Navbar = () => {
                 </div>
                 <ul>
                     <Link to="/my-decks"><li><span className='nav-vertical-bar'></span><FaLayerGroup className="nav-icon" />My Decks</li></Link>
-                    <Link to="/create-flashcards"><li><span className='nav-vertical-bar'></span><FaPlus className="nav-icon" />Create Flashcards</li></Link>
-                    <Link to="/generate-cards"><li><span className='nav-vertical-bar'></span><FaQuestionCircle className="nav-icon" />Generate Cards</li></Link>
                     <Link to="/progress"><li><span className='nav-vertical-bar'></span><FaChartBar className="nav-icon" />Progress</li></Link>
                 </ul>
                 <div className="auth-buttons">
