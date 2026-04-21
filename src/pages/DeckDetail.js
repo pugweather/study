@@ -37,6 +37,12 @@ const DeckDetail = () => {
     const [shuffledCards, setShuffledCards] = useState(null)
     const studyCards = shuffledCards || cards
     const currentCard = studyCards[currCardIndex]
+
+    // Quiz tab state
+    const [quizConfig, setQuizConfig] = useState({
+        questions: null,
+        time: null // Seconds
+    })
     
     useEffect(() => {
         getCards()
@@ -279,7 +285,7 @@ const DeckDetail = () => {
                     <div className='deck-header-left'>
                         <Link className='back-btn' to='/my-decks'>← Back to Decks</Link>
                         <h1 className='deck-title-large'>{deck.title || "My Deck"}</h1>
-                        <span className='deck-card-count'>5 cards</span>
+                        <span className='deck-card-count'>{cards.length || 0} cards</span>
                     </div>
                     <div className='deck-header-right'>
                         <button className='deck-action-btn edit-btn' onClick={handleOpenEditDeckModal}>Edit Deck</button>
@@ -503,21 +509,42 @@ const DeckDetail = () => {
                 {activeTab === "quiz" && (
                     <div className='quiz-tab'>
                         <h2 className='quiz-title'>Choose a Quiz Type</h2>
+
+                        <div className='quiz-settings-bar'>
+                            <div className='quiz-settings-group'>
+                                <span className='quiz-settings-label'>Questions</span>
+                                <div className='quiz-config-pills'>
+                                    {[5, 10, 15, 20].map(n => (
+                                        <button key={n} className='quiz-config-pill'>{n}</button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='quiz-settings-divider' />
+                            <div className='quiz-settings-group'>
+                                <span className='quiz-settings-label'>Total Time</span>
+                                <div className='quiz-config-pills'>
+                                    {['No limit', '2 min', '5 min', '10 min', '15 min'].map(t => (
+                                        <button key={t} className='quiz-config-pill'>{t}</button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className='quiz-types'>
                             <div className='quiz-type-card'>
-                                <div className='quiz-icon'>📝</div>
+                                <div className='quiz-icon'></div>
                                 <h3>Fill in the Blank</h3>
                                 <p>Complete sentences using terms from your deck</p>
                                 <button className='start-quiz-btn'>Start Quiz</button>
                             </div>
                             <div className='quiz-type-card'>
-                                <div className='quiz-icon'>✍️</div>
+                                <div className='quiz-icon'></div>
                                 <h3>Use in Sentence</h3>
                                 <p>Write sentences using the given terms</p>
                                 <button className='start-quiz-btn'>Start Quiz</button>
                             </div>
                             <div className='quiz-type-card'>
-                                <div className='quiz-icon'>🎯</div>
+                                <div className='quiz-icon'></div>
                                 <h3>Multiple Choice</h3>
                                 <p>Test your knowledge with multiple choice questions</p>
                                 <button className='start-quiz-btn'>Start Quiz</button>

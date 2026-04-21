@@ -6,8 +6,10 @@ const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null
 
     return createPortal(
-        <div>
-            {children}
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                {children}
+            </div>
         </div>,
         document.getElementById('modal-root')
     )

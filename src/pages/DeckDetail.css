@@ -567,3 +567,105 @@
         transform: translateY(0);
     }
 }
+
+/* Quiz config modal */
+.quiz-config-group {
+    margin-bottom: 1.25rem;
+}
+
+.quiz-config-group > label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.quiz-config-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.quiz-config-pill {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.quiz-config-pill:hover {
+    border-color: #a5b4fc;
+    color: #4f46e5;
+}
+
+.quiz-config-pill.active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+.quiz-config-toggle {
+    display: flex !important;
+    align-items: center;
+    gap: 0.625rem;
+    cursor: pointer;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    margin-bottom: 0 !important;
+}
+
+.quiz-config-toggle input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+.quiz-config-hint {
+    margin: 0.625rem 0 0 0;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Quiz settings bar (inline, above quiz type cards) */
+.quiz-settings-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.quiz-settings-group {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+}
+
+.quiz-settings-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.quiz-settings-divider {
+    width: 1px;
+    align-self: stretch;
+    background: #e5e7eb;
+}
