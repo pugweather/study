@@ -191,3 +191,56 @@
     color: #6b7280;
     margin: 0 0 2rem 0;
 }
+
+/* Quiz type toggle (for testing) */
+.quiz-type-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.quiz-type-toggle button {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.15s ease;
+}
+
+.quiz-type-toggle button:hover {
+    border-color: #a5b4fc;
+    color: #4f46e5;
+}
+
+.quiz-type-toggle button.active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-color: transparent;
+    color: white;
+}
+
+/* Input answer field */
+.input-answer {
+    margin-bottom: 1.5rem;
+}
+
+.input-answer input,
+.input-answer textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.input-answer input:focus,
+.input-answer textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+

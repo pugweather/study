@@ -24,7 +24,7 @@ export async function generateQuiz(req, res) {
         }
 
         if (!type || !numQuestions) {
-            return res.status(400).json({"Quiz configurations required"})
+            return res.status(400).json({error: "Quiz configurations required"})
         }
 
         let prompt = ""

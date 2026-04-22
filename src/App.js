@@ -28,7 +28,6 @@ const AppRouter = () => {
       <Route path='/my-decks' element={<MyDecks />} />
       <Route path='/decks/:deckId' element={<DeckDetail />} />
       <Route path='/decks/:deckId/quiz' element={<Quiz />} />
-      <Route path='/create-flashcards' element={<CreateFlashcards />} />
     </Routes>
   )
 }

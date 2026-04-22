@@ -40,8 +40,8 @@ const DeckDetail = () => {
 
     // Quiz tab state
     const [quizConfig, setQuizConfig] = useState({
-        questions: null,
-        time: null // Seconds
+        numQuestions: 20,
+        time: 120 // Seconds
     })
     const [quiz, setQuiz] = useState(null)
     
@@ -49,6 +49,12 @@ const DeckDetail = () => {
         getCards()
         getDeck()
     }, [])
+    useEffect(() => {
+        setQuizConfig( {
+            numQuestions: isNumCardsMoreThan20() ? 20 : 'all',
+            time: 'no-limit'
+        })
+    }, [cards.length])
     
     function handleFilterCards(e) {
         setSearchTerm(e.target.value)
@@ -278,18 +284,35 @@ const DeckDetail = () => {
         setIsFlipped(false)
     }
 
-    async function generateQuiz() {
+    // Quiz tab functions
+    async function generateQuiz(type) {
+
+        if (!quizConfig?.numQuestions) {
+            return
+        }
+
         try {
-            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/generate-quiz`)
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/generate-quiz`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({numQuestions: quizConfig.numQuestions, type: type})
+            })
             if (!response.ok) {
                 throw new Error("Could not generate quiz")
             }
             const quiz = await response.json()
             setQuiz(quiz)
-            navigate('')
+            navigate(`/decks/${deckId}/quiz`)
         } catch(err) {
             console.error("Error: ", err.message)
         }
+    }
+
+    function isNumCardsMoreThan20() {
+        return cards?.length > 20
     }
 
     return (
@@ -529,9 +552,14 @@ const DeckDetail = () => {
                             <div className='quiz-settings-group'>
                                 <span className='quiz-settings-label'>Questions</span>
                                 <div className='quiz-config-pills'>
-                                    {[5, 10, 15, 20].map(n => (
-                                        <button key={n} className='quiz-config-pill'>{n}</button>
+                                    {[5, 10, 15].map(n => (
+                                        <button key={n} className={`quiz-config-pill ${n === quizConfig?.numQuestions ? 'active' : ''}`}>
+                                            {n}
+                                        </button>
                                     ))}
+                                    <button key={isNumCardsMoreThan20() ? 20 : 'All'} className={`quiz-config-pill ${'all' === quizConfig?.numQuestions ? 'active' : ''}`}>
+                                        {isNumCardsMoreThan20() ? 20 : 'All'}
+                                    </button>
                                 </div>
                             </div>
                             <div className='quiz-settings-divider' />
@@ -544,25 +572,24 @@ const DeckDetail = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className='quiz-types'>
                             <div className='quiz-type-card'>
                                 <div className='quiz-icon'></div>
                                 <h3>Fill in the Blank</h3>
                                 <p>Complete sentences using terms from your deck</p>
-                                <button className='start-quiz-btn'>Start Quiz</button>
+                                <button className='start-quiz-btn' onClick={() => generateQuiz("fill-in-the-blank")}>Start Quiz</button>
                             </div>
                             <div className='quiz-type-card'>
                                 <div className='quiz-icon'></div>
                                 <h3>Use in Sentence</h3>
                                 <p>Write sentences using the given terms</p>
-                                <button className='start-quiz-btn'>Start Quiz</button>
+                                <button className='start-quiz-btn' onClick={() =>generateQuiz("use-in-sentence")}>Start Quiz</button>
                             </div>
                             <div className='quiz-type-card'>
                                 <div className='quiz-icon'></div>
                                 <h3>Multiple Choice</h3>
                                 <p>Test your knowledge with multiple choice questions</p>
-                                <button className='start-quiz-btn'>Start Quiz</button>
+                                <button className='start-quiz-btn' onClick={() => generateQuiz("multiple-choice")}>Start Quiz</button>
                             </div>
                         </div>
                     </div>

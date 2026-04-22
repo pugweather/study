@@ -669,3 +669,9 @@
     align-self: stretch;
     background: #e5e7eb;
 }
+
+.quiz-config-pill.active {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-color: transparent;
+}
