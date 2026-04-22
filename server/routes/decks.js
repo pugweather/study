@@ -2,6 +2,7 @@ import express from 'express'
 import { requireAuth } from '../middleware/auth.js'
 import { addDeck, getDecks, getDeckById, deleteDeck, updateDeck } from '../controllers/decksController.js'
 import { getDeckCards, deleteCard, addCard, updateCard } from '../controllers/cardsController.js'
+import { generateQuiz } from '../controllers/quizController.js'
 
 export const decksRouter = express.Router()
 
@@ -19,3 +20,6 @@ decksRouter.get('/:deckId/cards', getDeckCards)
 decksRouter.post('/:deckId/cards', addCard)
 decksRouter.put('/:deckId/cards/:cardId', updateCard)
 decksRouter.delete('/:deckId/cards/:cardId', deleteCard)
+
+// Quizzes
+decksRouter.post('/:deckId/generate-quiz', generateQuiz)

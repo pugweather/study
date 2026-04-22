@@ -43,6 +43,7 @@ const DeckDetail = () => {
         questions: null,
         time: null // Seconds
     })
+    const [quiz, setQuiz] = useState(null)
     
     useEffect(() => {
         getCards()
@@ -271,10 +272,24 @@ const DeckDetail = () => {
         return shuffled
     }
 
-    function handleShuffleCards() {
+    async function handleShuffleCards() {
         setShuffledCards(shuffleCards())
         setCurrCardIndex(0)
         setIsFlipped(false)
+    }
+
+    async function generateQuiz() {
+        try {
+            const response = await fetch(`http://localhost:8000/api/decks/${deckId}/generate-quiz`)
+            if (!response.ok) {
+                throw new Error("Could not generate quiz")
+            }
+            const quiz = await response.json()
+            setQuiz(quiz)
+            navigate('')
+        } catch(err) {
+            console.error("Error: ", err.message)
+        }
     }
 
     return (

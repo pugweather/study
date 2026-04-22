@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import CreateFlashcards from './pages/CreateFlashcards'
 import MyDecks from './pages/MyDecks'
 import DeckDetail from './pages/DeckDetail'
+import Quiz from './pages/Quiz'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ const AppRouter = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/my-decks' element={<MyDecks />} />
       <Route path='/decks/:deckId' element={<DeckDetail />} />
+      <Route path='/decks/:deckId/quiz' element={<Quiz />} />
       <Route path='/create-flashcards' element={<CreateFlashcards />} />
     </Routes>
   )
