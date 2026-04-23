@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './Quiz.css'
 
 const Quiz = () => {
-    const [quizType, setQuizType] = useState('multiple-choice') // 'multiple-choice' | 'fill-blank' | 'use-in-sentence'
+    const [quizType, setQuizType] = useState('multiple-choice') // 'multiple-choice' | 'fill-in-the-blank' | 'use-in-sentence'
 
     return (
         <div className='quiz-page'>
@@ -22,7 +22,7 @@ const Quiz = () => {
                     <button className={quizType === 'multiple-choice' ? 'active' : ''} onClick={() => setQuizType('multiple-choice')}>
                         Multiple Choice
                     </button>
-                    <button className={quizType === 'fill-blank' ? 'active' : ''} onClick={() => setQuizType('fill-blank')}>
+                    <button className={quizType === 'fill-in-the-blank' ? 'active' : ''} onClick={() => setQuizType('fill-in-the-blank')}>
                         Fill in the Blank
                     </button>
                     <button className={quizType === 'use-in-sentence' ? 'active' : ''} onClick={() => setQuizType('use-in-sentence')}>
@@ -69,7 +69,7 @@ const Quiz = () => {
                     )}
 
                     {/* Fill in the Blank UI */}
-                    {quizType === 'fill-blank' && (
+                    {quizType === 'fill-in-the-blank' && (
                         <div className='question-card'>
                             <h2 className='question-text'>
                                 The process by which plants convert light energy into chemical energy is called ____.

@@ -51,7 +51,7 @@ const DeckDetail = () => {
     }, [])
     useEffect(() => {
         setQuizConfig( {
-            numQuestions: isNumCardsMoreThan20() ? 20 : 'all',
+            numQuestions: isNumCardsMoreThan20() ? 20 : cards.length,
             time: 'no-limit'
         })
     }, [cards.length])

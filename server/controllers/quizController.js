@@ -1,6 +1,7 @@
 import { OpenAI } from "openai/client.js";
-import { getDBConnection } from "../db/db";
-import { verifyDeckOwnership } from "../services/deckServices";
+import { getDBConnection } from "../db/db.js";
+import { verifyDeckOwnership } from "../services/deckServices.js";
+import 'dotenv/config'
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -8,10 +9,12 @@ const openai = new OpenAI({
 
 // type = fill-in-the-bank | use-in-sentence | multiple-choice
 export async function generateQuiz(req, res) {
+    
     try {
-
+        
         const { deckId } = req.params
         const { type, numQuestions } = req.body
+        
         const isDeckOwner = await verifyDeckOwnership(deckId, req.session.userId)
         if (!isDeckOwner) {
             return res.status(403).json({error: "Deck doesn't exist or user doesn't own this deck"})
@@ -33,7 +36,7 @@ export async function generateQuiz(req, res) {
             Generate ${numQuestions} multiple choice questions. Each question should have 4 options where only one is correct.
             Return ONLY valid JSON (no markdown), in this format:
             [{"question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": "A"}]`
-        } else if (type === "fill-blank") {
+        } else if (type === "fill-in-the-blank") {
             prompt = `Using ONLY these flashcards: ${JSON.stringify(cards)}.
             Generate ${numQuestions} fill-in-the-blank questions. Take the answer and replace the key term with "____".
             Return ONLY valid JSON:
@@ -53,7 +56,7 @@ export async function generateQuiz(req, res) {
             response_format: {type: "json_object"}
         })
 
-        const questions = JSON.parse(response.choices[0].message_content)
+        const questions = JSON.parse(response.choices[0].message.content)
         return res.json({questions})
 
     } catch(err) {
