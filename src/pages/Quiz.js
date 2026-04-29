@@ -10,14 +10,11 @@ const Quiz = () => {
     const [quizType, setQuizType] = useState(type) // 'multiple-choice' | 'fill-in-the-blank' | 'use-in-sentence'
     const [currQuestionIndex, setCurrQuestionIndex] = useState(0)
 
+    const { deckId } = useParams()
     const questions = quiz?.questions ? quiz.questions : []
     const currQuestion = questions[currQuestionIndex]
+    
     console.log(currQuestion)
-    const { deckId } = useParams()
-
-    // console.log(quiz, quizConfig, deck, type)
-    console.log(quiz.questions)
-
 
     function getQuizTypeLabel(type) {
         const bank = {
