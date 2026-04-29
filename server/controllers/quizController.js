@@ -35,17 +35,17 @@ export async function generateQuiz(req, res) {
             prompt = `Using ONLY these flashcards as the source material: ${JSON.stringify(cards)}.
             Generate ${numQuestions} multiple choice questions. Each question should have 4 options where only one is correct.
             Return ONLY valid JSON (no markdown), in this format:
-            [{"question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": "A"}]`
+            {"questions": [{"question": "...", "options": ["A", "B", "C", "D"], "correctAnswer": "A"}]}`
         } else if (type === "fill-in-the-blank") {
             prompt = `Using ONLY these flashcards: ${JSON.stringify(cards)}.
             Generate ${numQuestions} fill-in-the-blank questions. Take the answer and replace the key term with "____".
-            Return ONLY valid JSON:
-            [{"question": "...", "answer": "..."}]`
+            Return ONLY valid JSON (no markdown), in this format:
+            {"questions": [{"question": "...", "answer": "..."}]}`
         } else if (type === "use-in-sentence") {
             prompt = `Using ONLY these flashcards: ${JSON.stringify(cards)}.
-            Generate ${numQuestions} "use in a sentence" prompts. For each, give the term and what a correct usage looks like.
-            Return ONLY valid JSON:
-            [{"term": "...", "exampleCorrectUsage": "..."}]`
+            Generate ${numQuestions} "use in a sentence" prompts. For each, give the term only.
+            Return ONLY valid JSON (no markdown), in this format:
+            {"questions": [{"term": "..."}]}`
         } else {
             return res.status(400).json({error: "Invalid quiz type"})
         }
@@ -56,8 +56,9 @@ export async function generateQuiz(req, res) {
             response_format: {type: "json_object"}
         })
 
+        // console.log("OpenAI raw response:", response.choices[0].message.content)
         const questions = JSON.parse(response.choices[0].message.content)
-        return res.json({questions})
+        return res.json(questions)
 
     } catch(err) {
         return res.status(500).json({error: "Server error"})

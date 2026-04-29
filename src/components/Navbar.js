@@ -15,7 +15,7 @@ const Navbar = () => {
                     <div>Luminora</div>
                 </div>
                 <ul>
-                    <Link to="/my-decks"><li><span className='nav-vertical-bar'></span><FaLayerGroup className="nav-icon" />My Decks</li></Link>
+                    <Link to="/decks"><li><span className='nav-vertical-bar'></span><FaLayerGroup className="nav-icon" />My Decks</li></Link>
                     <Link to="/progress"><li><span className='nav-vertical-bar'></span><FaChartBar className="nav-icon" />Progress</li></Link>
                 </ul>
                 <div className="auth-buttons">

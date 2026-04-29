@@ -1,24 +1,48 @@
 import { useState } from 'react'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import './Quiz.css'
 
 const Quiz = () => {
-    const [quizType, setQuizType] = useState('multiple-choice') // 'multiple-choice' | 'fill-in-the-blank' | 'use-in-sentence'
+
+    const location = useLocation()
+    const { quiz, quizConfig, deck, type, cards } = location.state || {}
+
+    const [quizType, setQuizType] = useState(type) // 'multiple-choice' | 'fill-in-the-blank' | 'use-in-sentence'
+    const [currQuestionIndex, setCurrQuestionIndex] = useState(0)
+
+    const questions = quiz?.questions ? quiz.questions : []
+    const currQuestion = questions[currQuestionIndex]
+    console.log(currQuestion)
+    const { deckId } = useParams()
+
+    // console.log(quiz, quizConfig, deck, type)
+    console.log(quiz.questions)
+
+
+    function getQuizTypeLabel(type) {
+        const bank = {
+            'multiple-choice': 'Multiple Choice',
+            'fill-in-the-blank': 'Fill in the Blank',
+            'use-in-sentence': 'Use in Sentence'
+        }
+        return bank[type] || 'Quiz'
+    }
 
     return (
         <div className='quiz-page'>
             <div className='quiz-container'>
                 <div className='quiz-header'>
-                    <button className='back-btn'>
-                        ← Back to Deck
-                    </button>
-                    <h1 className='quiz-title'>Quiz</h1>
+                    <Link className='back-btn' to={`/decks/${deckId}`}>
+                        ← Back to Decks
+                    </Link>
+                    <h1 className='quiz-title'>{deck.title} - {getQuizTypeLabel(type)}</h1>
                     <span className='quiz-progress'>
-                        Question 1 of 3
+                        Question 1 {quizConfig.numQuestions ? `of ${quizConfig.numQuestions}` : ''}
                     </span>
                 </div>
 
                 {/* Hardcoded toggle for testing */}
-                <div className='quiz-type-toggle'>
+                {/* <div className='quiz-type-toggle'>
                     <button className={quizType === 'multiple-choice' ? 'active' : ''} onClick={() => setQuizType('multiple-choice')}>
                         Multiple Choice
                     </button>
@@ -28,14 +52,14 @@ const Quiz = () => {
                     <button className={quizType === 'use-in-sentence' ? 'active' : ''} onClick={() => setQuizType('use-in-sentence')}>
                         Use in Sentence
                     </button>
-                </div>
+                </div> */}
 
                 <div className='quiz-content'>
                     {/* Multiple Choice UI */}
                     {quizType === 'multiple-choice' && (
                         <div className='question-card'>
                             <h2 className='question-text'>
-                                What is the powerhouse of the cell?
+                                {currQuestion?.question}
                             </h2>
 
                             <div className='options-list'>
@@ -70,28 +94,39 @@ const Quiz = () => {
 
                     {/* Fill in the Blank UI */}
                     {quizType === 'fill-in-the-blank' && (
-                        <div className='question-card'>
-                            <h2 className='question-text'>
-                                The process by which plants convert light energy into chemical energy is called ____.
-                            </h2>
+                        <>
+                            <div className='question-card'>
+                                <h2 className='question-text'>
+                                    The process by which plants convert light energy into chemical energy is called ____.
+                                </h2>
 
-                            <div className='input-answer'>
-                                <input type='text' placeholder='Type your answer...' />
-                            </div>
+                                <div className='input-answer'>
+                                    <input type='text' placeholder='Type your answer...' />
+                                </div>
 
-                            <div className='result-feedback'>
-                                <p className='correct'>Correct! Photosynthesis</p>
-                            </div>
+                                <div className='result-feedback'>
+                                    <p className='correct'>Correct! Photosynthesis</p>
+                                </div>
 
-                            <div className='quiz-controls'>
-                                <button className='control-btn'>
-                                    ← Previous
-                                </button>
-                                <button className='control-btn'>
-                                    Next →
-                                </button>
+                                <div className='quiz-controls'>
+                                    <button className='control-btn'>
+                                        ← Previous
+                                    </button>
+                                    <button className='control-btn'>
+                                        Next →
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                            {cards && (
+                                <div className='terms-grid'>
+                                    {cards.map(card => (
+                                        <div key={card.id} className='term-pill'>
+                                            {card.term}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </>
                     )}
 
                     {/* Use in Sentence UI */}

@@ -73,7 +73,7 @@ const Login = () => {
             await getUser()
 
             // Success
-            navigate('/my-decks')
+            navigate('/decks')
 
         } catch(err) {
             setErrors(prev => ({...prev, general: err.message}))

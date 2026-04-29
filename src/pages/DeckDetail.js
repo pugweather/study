@@ -52,6 +52,7 @@ const DeckDetail = () => {
     useEffect(() => {
         setQuizConfig( {
             numQuestions: isNumCardsMoreThan20() ? 20 : cards.length,
+            type: null,
             time: 'no-limit'
         })
     }, [cards.length])
@@ -121,7 +122,7 @@ const DeckDetail = () => {
             if (!response.ok) {
                 throw new Error("Failed to delete deck")
             } 
-            navigate("/my-decks")
+            navigate("/decks")
         } catch(err) {
             console.log("Error: ", err.message)
         }
@@ -304,8 +305,17 @@ const DeckDetail = () => {
                 throw new Error("Could not generate quiz")
             }
             const quiz = await response.json()
+            console.log(quiz)
             setQuiz(quiz)
-            navigate(`/decks/${deckId}/quiz`)
+            navigate(`/decks/${deckId}/quiz`, {
+                state: { 
+                    quiz, 
+                    deck, 
+                    type,
+                    quizConfig,
+                    cards
+                }
+            })
         } catch(err) {
             console.error("Error: ", err.message)
         }
@@ -321,7 +331,7 @@ const DeckDetail = () => {
             <div className='right-frame'>
                 <div className='deck-header'>
                     <div className='deck-header-left'>
-                        <Link className='back-btn' to='/my-decks'>← Back to Decks</Link>
+                        <Link className='back-btn' to='/decks'>← Back to Decks</Link>
                         <h1 className='deck-title-large'>{deck.title || "My Deck"}</h1>
                         <span className='deck-card-count'>{cards.length || 0} cards</span>
                     </div>
