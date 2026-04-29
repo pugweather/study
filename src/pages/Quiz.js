@@ -13,6 +13,9 @@ const Quiz = () => {
     const { deckId } = useParams()
     const questions = quiz?.questions ? quiz.questions : []
     const currQuestion = questions[currQuestionIndex]
+
+    // Multiple choice state
+    const [MCAnswers, setMCAnswers] = useState({})
     
     console.log(currQuestion)
 
@@ -23,6 +26,11 @@ const Quiz = () => {
             'use-in-sentence': 'Use in Sentence'
         }
         return bank[type] || 'Quiz'
+    }
+
+    // Multiple choice
+    function handleSelectMultipleChoiceOption(selectedIndex) {
+        
     }
 
     return (
@@ -60,22 +68,14 @@ const Quiz = () => {
                             </h2>
 
                             <div className='options-list'>
-                                <button className='option-btn'>
-                                    Nucleus
-                                </button>
-                                <button className='option-btn'>
-                                    Mitochondria
-                                </button>
-                                <button className='option-btn'>
-                                    Ribosome
-                                </button>
-                                <button className='option-btn'>
-                                    Golgi apparatus
-                                </button>
+                                {
+                                    currQuestion.options.map((x, i)=> <button key={x} className='option-btn' onClick={() => handleSelectMultipleChoiceOption(i)}>{x}</button>)
+                                }
                             </div>
 
                             <div className='result-feedback'>
                                 <p className='correct'>Correct!</p>
+                                <p className='incorrect'>Incorrect!</p>
                             </div>
 
                             <div className='quiz-controls'>

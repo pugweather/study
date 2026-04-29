@@ -36,7 +36,7 @@ export async function generateQuiz(req, res) {
             Generate ${numQuestions} multiple choice questions. Each question should have 4 options where only one is correct.
             Do NOT include letter prefixes (A), B), etc.) in the options - just the term itself.
             Return ONLY valid JSON (no markdown), in this format:
-            {"questions": [{"question": "...", "options": ["...", "...", "...", "..."], "correctAnswer": "..."}]}`
+            {"questions": [{"question": "...", "options": ["...", "...", "...", "..."], "correctAnswer": "(array index of correct option in options array)"}]}`
         } else if (type === "fill-in-the-blank") {
             prompt = `Using ONLY these flashcards: ${JSON.stringify(cards)}.
             Generate ${numQuestions} fill-in-the-blank questions. Take the answer and replace the key term with "____".
