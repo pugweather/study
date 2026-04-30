@@ -115,6 +115,7 @@
 }
 
 .result-feedback {
+    min-height: 60px;
     margin-bottom: 1.5rem;
     padding: 1rem;
     border-radius: 8px;

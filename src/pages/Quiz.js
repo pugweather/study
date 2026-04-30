@@ -7,7 +7,6 @@ const Quiz = () => {
     const location = useLocation()
     const { quiz, quizConfig, deck, type, cards } = location.state || {}
 
-    const [quizType, setQuizType] = useState(type) // 'multiple-choice' | 'fill-in-the-blank' | 'use-in-sentence'
     const [currQuestionIndex, setCurrQuestionIndex] = useState(0)
 
     const { deckId } = useParams()
@@ -17,7 +16,7 @@ const Quiz = () => {
     // Multiple choice state
     const [MCAnswers, setMCAnswers] = useState({})
     
-    console.log(currQuestion)
+    console.log(MCAnswers)
 
     function getQuizTypeLabel(type) {
         const bank = {
@@ -30,8 +29,28 @@ const Quiz = () => {
 
     // Multiple choice
     function handleSelectMultipleChoiceOption(selectedIndex) {
-        
+        const correctAnswerIndex = Number(currQuestion?.correctAnswer)
+        setMCAnswers(prevAnswers => ({...prevAnswers, [currQuestionIndex]: {selected: selectedIndex, correct: selectedIndex === correctAnswerIndex ? true : false}}))
     }
+    
+    // General util functions
+    function handleGoNextQuestion() {
+        if (currQuestionIndex === questions.length - 1) {
+            console.log("Quiz complete!")
+            return
+        }
+        setCurrQuestionIndex(prev => prev + 1)
+    }
+
+    function handleGoPrevQuestion() {
+        if (currQuestionIndex === 0) {
+            return
+        }
+        setCurrQuestionIndex(prev => prev - 1)
+    }
+    
+    // console.log(MCAnswers)
+    console.log(currQuestion)
 
     return (
         <div className='quiz-page'>
@@ -46,43 +65,30 @@ const Quiz = () => {
                     </span>
                 </div>
 
-                {/* Hardcoded toggle for testing */}
-                {/* <div className='quiz-type-toggle'>
-                    <button className={quizType === 'multiple-choice' ? 'active' : ''} onClick={() => setQuizType('multiple-choice')}>
-                        Multiple Choice
-                    </button>
-                    <button className={quizType === 'fill-in-the-blank' ? 'active' : ''} onClick={() => setQuizType('fill-in-the-blank')}>
-                        Fill in the Blank
-                    </button>
-                    <button className={quizType === 'use-in-sentence' ? 'active' : ''} onClick={() => setQuizType('use-in-sentence')}>
-                        Use in Sentence
-                    </button>
-                </div> */}
-
                 <div className='quiz-content'>
                     {/* Multiple Choice UI */}
-                    {quizType === 'multiple-choice' && (
+                    {type === 'multiple-choice' && (
                         <div className='question-card'>
                             <h2 className='question-text'>
                                 {currQuestion?.question}
                             </h2>
 
                             <div className='options-list'>
-                                {
-                                    currQuestion.options.map((x, i)=> <button key={x} className='option-btn' onClick={() => handleSelectMultipleChoiceOption(i)}>{x}</button>)
-                                }
+                                {currQuestion.options.map((x, i) => {
+                                    return <button key={x} className={`option-btn ${MCAnswers?.[currQuestionIndex]?.correct === true ? "correct" : MCAnswers?.[currQuestionIndex]?.correct === false ? "incorrect" : ""}`} onClick={() => handleSelectMultipleChoiceOption(i)}>{x}</button>
+                                })}
                             </div>
 
                             <div className='result-feedback'>
-                                <p className='correct'>Correct!</p>
-                                <p className='incorrect'>Incorrect!</p>
+                                {MCAnswers?.[currQuestionIndex]?.correct === true && <p className='correct'>Correct!</p>}
+                                {MCAnswers?.[currQuestionIndex]?.correct === false && <p className='incorrect'>Incorrect!</p>}
                             </div>
 
                             <div className='quiz-controls'>
-                                <button className='control-btn'>
+                                <button className='control-btn' onClick={handleGoPrevQuestion}>
                                     ← Previous
                                 </button>
-                                <button className='control-btn'>
+                                <button className='control-btn' onClick={handleGoNextQuestion}>
                                     Next →
                                 </button>
                             </div>
@@ -90,7 +96,7 @@ const Quiz = () => {
                     )}
 
                     {/* Fill in the Blank UI */}
-                    {quizType === 'fill-in-the-blank' && (
+                    {type === 'fill-in-the-blank' && (
                         <>
                             <div className='question-card'>
                                 <h2 className='question-text'>
@@ -127,7 +133,7 @@ const Quiz = () => {
                     )}
 
                     {/* Use in Sentence UI */}
-                    {quizType === 'use-in-sentence' && (
+                    {type === 'use-in-sentence' && (
                         <div className='question-card'>
                             <h2 className='question-text'>
                                 Use the term "Mitochondria" in a sentence.
