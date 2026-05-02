@@ -31,6 +31,38 @@
     font-weight: 500;
 }
 
+.quiz-header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.question-card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.question-card-header .quiz-progress {
+    position: absolute;
+    right: 0;
+}
+
+.quiz-timer {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    font-family: 'Courier New', monospace;
+    background: white;
+    padding: 0.5rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+}
+
 .back-btn {
     padding: 0.5rem 1rem;
     background: white;

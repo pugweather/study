@@ -41,7 +41,7 @@ const DeckDetail = () => {
     // Quiz tab state
     const [quizConfig, setQuizConfig] = useState({
         numQuestions: 20,
-        time: 120 // Seconds
+        time: "No limit"
     })
     const [quiz, setQuiz] = useState(null)
     
@@ -49,11 +49,11 @@ const DeckDetail = () => {
         getCards()
         getDeck()
     }, [])
+
     useEffect(() => {
         setQuizConfig( {
             numQuestions: isNumCardsMoreThan20() ? 20 : cards.length,
-            type: null,
-            time: 'no-limit'
+            time: 'No limit'
         })
     }, [cards.length])
     
@@ -175,6 +175,7 @@ const DeckDetail = () => {
         setIsNewCardOpened(false)
     }
 
+    // Quiz tab functions
     async function handleAddNewCard() {
 
         const {term, answer} = newCard
@@ -577,7 +578,7 @@ const DeckDetail = () => {
                                 <span className='quiz-settings-label'>Total Time</span>
                                 <div className='quiz-config-pills'>
                                     {['No limit', '2 min', '5 min', '10 min', '15 min'].map(t => (
-                                        <button key={t} className='quiz-config-pill'>{t}</button>
+                                        <button key={t} className={`quiz-config-pill ${quizConfig?.time === t ? 'active' : ''}`} onClick={() => setQuizConfig(prev => ({...prev, time: t}))}>{t}</button>
                                     ))}
                                 </div>
                             </div>
@@ -593,7 +594,7 @@ const DeckDetail = () => {
                                 <div className='quiz-icon'></div>
                                 <h3>Use in Sentence</h3>
                                 <p>Write sentences using the given terms</p>
-                                <button className='start-quiz-btn' onClick={() =>generateQuiz("use-in-sentence")}>Start Quiz</button>
+                                <button className='start-quiz-btn' onClick={() => generateQuiz("use-in-sentence")}>Start Quiz</button>
                             </div>
                             <div className='quiz-type-card'>
                                 <div className='quiz-icon'></div>

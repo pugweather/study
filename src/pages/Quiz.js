@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import './Quiz.css'
 
@@ -15,8 +15,6 @@ const Quiz = () => {
 
     // Multiple choice state
     const [MCAnswers, setMCAnswers] = useState({})
-    
-    console.log(MCAnswers)
 
     function getQuizTypeLabel(type) {
         const bank = {
@@ -26,6 +24,9 @@ const Quiz = () => {
         }
         return bank[type] || 'Quiz'
     }
+
+    // General state
+    const [time, setTime] = useState(quizConfig?.time ? convertTimeToSeconds(quizConfig?.time) : null)
 
     // Multiple choice
     function handleSelectMultipleChoiceOption(selectedIndex) {
@@ -42,6 +43,27 @@ const Quiz = () => {
         setCurrQuestionIndex(prev => prev + 1)
     }
 
+    function convertTimeToSeconds(time) {
+        if (time === "No limit") return null
+        if (time === "2 min") return 120
+        if (time === "5 min") return 300
+        if (time === "10 min") return 600
+        if (time === "15 min") return 900
+    }
+
+    function formatTime(seconds) {
+
+        console.log(seconds)
+        console.log(quizConfig)
+
+        if (seconds === null) return
+
+        const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
+        const secs = (seconds % 60).toString().padStart(2, '0')
+        
+        return minutes + ' : ' + secs
+    }
+
     function handleGoPrevQuestion() {
         if (currQuestionIndex === 0) {
             return
@@ -51,6 +73,11 @@ const Quiz = () => {
     
     // console.log(MCAnswers)
     console.log(currQuestion)
+    console.log(quizConfig)
+
+    useEffect(() => {
+
+    })
 
     return (
         <div className='quiz-page'>
@@ -60,22 +87,27 @@ const Quiz = () => {
                         ← Back to Decks
                     </Link>
                     <h1 className='quiz-title'>{deck.title} - {getQuizTypeLabel(type)}</h1>
-                    <span className='quiz-progress'>
-                        Question 1 {quizConfig.numQuestions ? `of ${quizConfig.numQuestions}` : ''}
-                    </span>
                 </div>
 
                 <div className='quiz-content'>
                     {/* Multiple Choice UI */}
                     {type === 'multiple-choice' && (
                         <div className='question-card'>
+                            <div className='question-card-header'>
+                                {formatTime(time) ? <span className='quiz-timer'>{formatTime(time)}</span> : ''}
+                                <span className='quiz-progress'>
+                                    Question {currQuestionIndex + 1} {quizConfig.numQuestions ? `of ${quizConfig.numQuestions}` : ''}
+                                </span>
+                            </div>
                             <h2 className='question-text'>
                                 {currQuestion?.question}
                             </h2>
 
                             <div className='options-list'>
                                 {currQuestion.options.map((x, i) => {
-                                    return <button key={x} className={`option-btn ${MCAnswers?.[currQuestionIndex]?.correct === true ? "correct" : MCAnswers?.[currQuestionIndex]?.correct === false ? "incorrect" : ""}`} onClick={() => handleSelectMultipleChoiceOption(i)}>{x}</button>
+                                    const answer = MCAnswers?.[currQuestionIndex]
+                                    const selectedAnswer = answer?.selected
+                                    return <button key={x} className={`option-btn ${selectedAnswer ? "disabled" :  ''} ${selectedAnswer === i ? (answer?.correct ? "correct" : "incorrect ") : ''}`} onClick={() => handleSelectMultipleChoiceOption(i)}>{x}</button>
                                 })}
                             </div>
 
